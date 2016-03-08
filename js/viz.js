@@ -9,11 +9,11 @@
 var format = d3.time.format("%m/%d/%Y %I:%M:%S %p");
 
 //define date range for scatterplot
-var mindate = format.parse("1/1/1945 0:00:00 AM"),
+var mindate = format.parse("1/1/1944 0:00:00 AM"),
     maxdate = format.parse("1/1/2000 0:00:00 AM");
 
 //defining sizes and scales for scatterplot
-var tl_size = {'margin' : {top: 30, right: 20, bottom: 30, left: 40},
+var tl_size = {'margin' : {top: 30, right: 20, bottom: 30, left: 70},
     'width' : 1150,
     'height' : 500};
 
@@ -38,11 +38,10 @@ var cc = {'Russia' : 'DarkRed',
           'Unknown' : 'Black'};
 
 //extract radius
-function get_radius(d){
-
+function get_radius(d, data){
     //radius for circles on map
     var radius = d3.scale.linear()
-        .domain([0,50000])
+        .domain(d3.extent(data, function(d){return d['max_yield'];}))
         .range([5, 20]);
 
     return radius(d);
@@ -55,8 +54,7 @@ var brush = d3.svg.brush();
 
 // Define the div for the tooltip
 var div = d3.select("#timescatter").append("div")
-            .attr("class", "tooltip")
-            .style("opacity", 0);
+            .attr("class", "tooltip");
 
 // Create text for tooltip
 var tip_text = function(d){
@@ -134,33 +132,35 @@ function loadData(d,
 
 //DATA POINT SELECTION AND FILTERING
 
-var selectPoints = function(points) {
+var selectPoints = function(points, data) {
     d3.selectAll(points)
-        .attr("r", function(d){return get_radius(d['max_yield']) + 10;})
+        .attr("r", function(d){return get_radius(d['max_yield'], data) + 10;})
         .attr("opacity", 0.7);
 
     };
 
-var deselectPoints = function(points) {
+var deselectPoints = function(points, data) {
     d3.selectAll(points)
-        .attr("r", function(d){return get_radius(d['max_yield']);})
+        .attr("r", function(d){return get_radius(d['max_yield'],data);})
         .attr("opacity", 0.3)
         .attr("stroke", "none");
 };
 
-var selectCoord = function(coord) {
+var selectCoord = function(coord, data) {
     d3.select(coord)
-        .attr("r", 25)
+        .attr("r", function(d) {
+            return get_radius(d['max_yield'],data) + 10;
+        })
         .attr('fill', function(d) {
             return cc[d.Country];
         })
         .attr("opacity", 0.7);
 };
 
-var deselectCoord = function(coord) {
+var deselectCoord = function(coord, data) {
     d3.select(coord)
         .attr('r', function(d) {
-            return get_radius(d['max_yield']);
+            return get_radius(d['max_yield'],data);
         })
         .attr('fill', 'rgba(0, 0, 0, 0)')
         .attr('stroke', function(d) {
@@ -170,31 +170,32 @@ var deselectCoord = function(coord) {
         .attr('opacity', 0.7)
 };
 
-var onPointOver = function(point) {
-    selectPoints([point]);
+var onPointOver = function(point, data) {
+    selectPoints([point], data);
     var coord = d3.select("div#map").select('[index="' + point.__data__.index + '"]');
-    selectCoord(coord.node());
+    selectCoord(coord.node(), data);
 };
 
-var onPointOut = function(point) {
-    deselectPoints([point]);
+var onPointOut = function(point, data) {
+    deselectPoints([point], data);
     var coord = d3.select("div#map").select('[index="' + point.__data__.index + '"]');
-    deselectCoord(coord.node());
+    deselectCoord(coord.node(), data);
 };
 
-var onCoordOver = function(point) {
+var onCoordOver = function(point, data) {
+    console.log(data)
     var coord = d3.select("div#map").select('[index="' + point.__data__.index + '"]');
-    selectCoord(coord.node());
+    selectCoord(coord.node(), data);
     var pointScat = d3.select("div#timescatter").select('[index="' + point.__data__.index + '"]');
-    selectPoints([pointScat.node()]);
+    selectPoints([pointScat.node()], data);
 
 };
 
-var onCoordOut = function(point) {
+var onCoordOut = function(point, data) {
     var coord = d3.select("div#map").select('[index="' + point.__data__.index + '"]');
-    deselectCoord(coord.node());
+    deselectCoord(coord.node(), data);
     var pointScat = d3.select("div#timescatter").select('[index="' + point.__data__.index + '"]');
-    deselectPoints([pointScat.node()]);
+    deselectPoints([pointScat.node()], data);
 };
 
 // Update plots for filtering purposes
@@ -266,11 +267,9 @@ function map_draw(geo_data,
         .data(geo_data.features)
         .enter()
         .append('path')
+        .attr('class', 'map_path')
         .attr('d', path)
-        .style('fill', update_countries)
-        .style('opacity', 0.4)
-        .style('stroke', 'black')
-        .style('stroke-width', 0.5);
+        .style('fill', update_countries);
 
     //set colors of countries on map
     function update_countries(d) {
@@ -303,7 +302,7 @@ function plot_points(data) {
                                 .attr('cy', function(d) {
                                     return d.coords[1]; })
                                 .attr('r', function(d) {
-                                    return get_radius(d['max_yield']);
+                                    return get_radius(d['max_yield'], data);
                                 })
                                 .attr('fill', 'rgba(0, 0, 0, 0)')
                                 .attr('stroke', function(d) {
@@ -319,13 +318,13 @@ function plot_points(data) {
                                     div .html(tip_text(d))
                                         .style("left", (d3.event.pageX + 20) + "px")
                                         .style("top", (d3.event.pageY - 28) + "px");
-                                    onCoordOver(this, d);
+                                    onCoordOver(this, data);
                                 })
                                 .on("mouseout", function(d) {
                                     div.transition()
                                         .duration(500)
                                         .style("opacity", 0);
-                                    onCoordOut(this, d);
+                                    onCoordOut(this, data);
                                 });
 
     // removing filtered out data points
@@ -408,7 +407,7 @@ function fill_timeline(data) {
     // Enter new data
     circles.enter().append("circle")
         .attr('r', function (d) {
-            return get_radius(d['max_yield']);
+            return get_radius(d['max_yield'], data);
         })
         .attr("cx", function (d) {
             return tl_scales.x(d.datetime);
@@ -435,13 +434,13 @@ function fill_timeline(data) {
             div.html(tip_text(d))
                 .style("left", (d3.event.pageX + 20) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
-            onPointOver(this, d);
+            onPointOver(this, data);
         })
         .on("mouseout", function (d) {
             div.transition()
                 .duration(500)
                 .style("opacity", 0);
-            onPointOut(this, d);
+            onPointOut(this, data);
         });
 
     // Remove excess data

@@ -108,7 +108,7 @@
             </div>
         </div>
     </div>
-    <div id = "graphics" class = "row white-bg">
+    <div id = "graphics" class = "row white-bg" style="overflow : auto;">
         <div id = "map" class = "row gapped"></div>
         <div id = "timescatter" class = "row gapped"></div>
         <div id = "country_legend" class = "row gapped"></div>
@@ -124,15 +124,12 @@
 
     <div class="tabs">
         <ul role="tablist">
-            <li role="tab" aria-controls="#dataproc">Data Preprocessing</li>
             <li role="tab" aria-controls="#data">Data</li>
+            <li role="tab" aria-controls="#dataproc">Data Preprocessing</li>
             <li role="tab" aria-controls="#php">index.php</li>
             <li role="tab" aria-controls="#js">viz.js</li>
             <li role="tab" aria-controls="#css">viz.css</li>
         </ul>
-        <div id="dataproc" role="tabpanel" style="overflow : auto;">
-            <script src="https://gist.github.com/tdraebing/8af24acaa3a4184156c8.js"></script>
-        </div>
         <div id="data" role="tabpanel" style="overflow : auto;">
             <?php
             echo "<html><body><table>\n\n";
@@ -146,6 +143,9 @@
             }
             fclose($f);
             echo "\n</table></body></html>"; ?>
+        </div>
+        <div id="dataproc" role="tabpanel" style="overflow : auto;">
+            <script src="https://gist.github.com/tdraebing/8af24acaa3a4184156c8.js"></script>
         </div>
         <div id="php" role="tabpanel" style="overflow : auto;">
             <script src="https://gist.github.com/tdraebing/ccc5fce581c476cae41f.js"></script>

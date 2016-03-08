@@ -1,9 +1,16 @@
-.axis path,
-.axis line {
+.axis {
     fill: none;
     stroke: #000;
     shape-rendering: crispEdges;
     stroke-width: 1.5;
+    font-size: 16px;
+}
+
+
+.map_path {
+    opacity: 0.4;
+    stroke: black;
+    stroke-width: 1;
 }
 
 .dot {
@@ -16,11 +23,13 @@ div.tooltip {
     width: 200px;
     height: 125px;
     padding: 2px;
-    font: 12px sans-serif;
-    background: lightsteelblue;
+    font-size: 12px;
+    background: #34495e;
     border: 0px;
     border-radius: 8px;
     pointer-events: none;
+    opacity: 0.125;
+    color: white;
 }
 
 .brush .extent {
