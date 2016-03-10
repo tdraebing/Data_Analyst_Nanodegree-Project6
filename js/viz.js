@@ -37,23 +37,57 @@ var cc = {'Russia' : 'DarkRed',
           'Pakistan' : 'Lime',
           'Unknown' : 'Black'};
 
+var circle_range = [5, 20];
+
 //extract radius
 function get_radius(d, data){
     //radius for circles on map
     var radius = d3.scale.linear()
         .domain(d3.extent(data, function(d){return d['max_yield'];}))
-        .range([5, 20]);
-
+        .range(circle_range);
     return radius(d);
 }
+
 
 // Define the brush for selection
 var brush = d3.svg.brush();
 
+// Clear the previously-active brush, if any.
+function brushstart() {
+    d3.select('brush').call(brush.clear());
+}
+
+
+// Highlight the selected circles.
+function brushmove(data) {
+    var e = brush.extent();
+    d3.select("#timescatter")
+        .select("svg")
+        .select('g.scatter')
+        .selectAll("circle")
+        .classed("greyed", function(d) {
+            return d.datetime <= e[0][0] || d.datetime >= e[1][0]
+                ||  d.max_yield <= e[0][1] || d.max_yield >= e[1][1];
+        });
+    update(data);
+}
+
+// If the brush is empty, select all circles.
+function brushend() {
+    if (brush.empty()) {
+        d3.select("#timescatter")
+            .select("svg")
+            .select('g.scatter')
+            .selectAll(".greyed")
+            .classed("greyed", false);
+    }
+}
+
 //TOOLTIP
 
 // Define the div for the tooltip
-var div = d3.select("#timescatter").append("div")
+var div = d3.select("#timescatter")
+            .append("div")
             .attr("class", "tooltip");
 
 // Create text for tooltip
@@ -134,22 +168,24 @@ function loadData(d,
 
 var selectPoints = function(points, data) {
     d3.selectAll(points)
-        .attr("r", function(d){return get_radius(d['max_yield'], data) + 10;})
+        .attr("r", function(){
+            return circle_range[1];
+        })
         .attr("opacity", 0.7);
 
     };
 
 var deselectPoints = function(points, data) {
     d3.selectAll(points)
-        .attr("r", function(d){return get_radius(d['max_yield'],data);})
+        .attr("r", function(d){return get_radius(d['max_yield'], data);})
         .attr("opacity", 0.3)
         .attr("stroke", "none");
 };
 
 var selectCoord = function(coord, data) {
     d3.select(coord)
-        .attr("r", function(d) {
-            return get_radius(d['max_yield'],data) + 10;
+        .attr("r", function(){
+            return circle_range[1];
         })
         .attr('fill', function(d) {
             return cc[d.Country];
@@ -183,7 +219,6 @@ var onPointOut = function(point, data) {
 };
 
 var onCoordOver = function(point, data) {
-    console.log(data)
     var coord = d3.select("div#map").select('[index="' + point.__data__.index + '"]');
     selectCoord(coord.node(), data);
     var pointScat = d3.select("div#timescatter").select('[index="' + point.__data__.index + '"]');
@@ -240,7 +275,7 @@ function update(data){
     }
 
     plot_points(filtered);
-    fill_timeline(filtered_country);
+    fill_timeline(filtered);
 }
 
 //MAP
@@ -315,7 +350,7 @@ function plot_points(data) {
                                     div.transition()
                                         .duration(200)
                                         .style("opacity", .9);
-                                    div .html(tip_text(d))
+                                    div.html(tip_text(d))
                                         .style("left", (d3.event.pageX + 20) + "px")
                                         .style("top", (d3.event.pageY - 28) + "px");
                                     onCoordOver(this, data);
@@ -380,13 +415,17 @@ function timeline(data){
 
     brush.x(tl_scales.x)
         .y(tl_scales.y)
-        .on("brush", function(d){update(data);});
+        .on("brushstart", brushstart)
+        .on("brush", function(){brushmove(data);})
+        .on("brushend", brushend);
 
     tl_svg.append("g")
         .attr("class", "brush")
         .call(brush)
         .selectAll("rect")
 }
+
+
 
 //filling scatter plot
 function fill_timeline(data) {
@@ -406,6 +445,7 @@ function fill_timeline(data) {
 
     // Enter new data
     circles.enter().append("circle")
+        .classed('greyed', false)
         .attr('r', function (d) {
             return get_radius(d['max_yield'], data);
         })
@@ -442,9 +482,6 @@ function fill_timeline(data) {
                 .style("opacity", 0);
             onPointOut(this, data);
         });
-
-    // Remove excess data
-    circles.exit().remove();
 }
 
 // FILTERING COUNTRIES
@@ -578,7 +615,7 @@ function filter_removal(data) {
         fill_timeline(data);
         d3.selectAll(".brush").call(brush.clear());
     }
-
+    console.log(d3.select('div#bc_all'))
     //create button for removing filters
     d3.select('div#bc_all')
         .append('input')
@@ -587,6 +624,50 @@ function filter_removal(data) {
         .attr("value", "Remove all Filters")
         .attr("class", "block")
         .on("click", remove_filters);
+    console.log(d3.select('div#bc_all').selectAll('input'))
+}
+
+function update_filters(data){
+    console.log(d3.select('div#update_filter_button'))
+    function apply_filters(){
+        //circle size
+        var min_cs = d3.select('input#min').node().value;
+        var max_cs = d3.select('input#max').node().value;
+        circle_range = [min_cs, max_cs];
+        console.log(circle_range);
+        d3.select("#map")
+            .select("svg")
+            .selectAll("circle")
+            .attr('r', function(d) {
+                return get_radius(d['max_yield'], data);
+            });
+        d3.select("#timescatter")
+            .select("svg")
+            .select('g.scatter')
+            .selectAll("circle")
+            .attr('r', function(d) {
+                return get_radius(d['max_yield'], data);
+            });
+
+        //dates
+        var min_date = d3.select('input#min_datepicker').node().value;
+        var max_date = d3.select('input#max_datepicker').node().value;
+        console.log(min_date);
+
+        //yield
+        var min_yield = d3.select('input#miny').node().value;
+        var max_yield = d3.select('input#maxy').node().value;
+
+    }
+
+    d3.select('div#update_filter_button')
+        .append('input')
+        .attr('type', 'button')
+        .attr("name", "update_filters")
+        .attr("value", "Update")
+        .attr("class", "block")
+        .on("click", apply_filters);
+    console.log(d3.select('div#update_filter_button.skip-one.one.third').selectAll('input'))
 }
 
 // DRAW VISUALIZATION
@@ -605,6 +686,7 @@ function draw(){
         .translate([(size_map.width - size_map.margin) / 2.05,
             (size_map.height - size_map.margin) / 1.6]);
 
+
     //draw map
     d3.json("./data/map/world_countries.json",
         function (d){
@@ -620,6 +702,7 @@ function draw(){
         },
         function (d) {
             country_filter(d);
+            update_filters(d);
             country_buttons(d);
             selection_removal(d);
             filter_removal(d);
@@ -629,3 +712,4 @@ function draw(){
         });
 
 }
+

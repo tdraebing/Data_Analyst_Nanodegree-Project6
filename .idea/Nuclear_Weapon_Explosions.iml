@@ -28,5 +28,8 @@
     <orderEntry type="library" name="jquery" level="application" />
     <orderEntry type="library" name="d3.v3" level="application" />
     <orderEntry type="library" name="8af24acaa3a4184156c8" level="application" />
+    <orderEntry type="library" name="ccc5fce581c476cae41f" level="application" />
+    <orderEntry type="library" name="b7838c4f6257d96e460e" level="application" />
+    <orderEntry type="library" name="057b0ac35166f6c5d5b5" level="application" />
   </component>
 </module>

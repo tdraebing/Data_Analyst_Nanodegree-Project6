@@ -3,12 +3,8 @@
 <head>
     <meta charset="utf-8">
 
-    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
-    <script src="./js/viz.js"></script>
-    <script type="text/javascript">
-        draw();
-    </script>
+
 
     <!-- Modernizr -->
     <script src="./js/libs/modernizr-2.6.2.min.js"></script>
@@ -23,6 +19,10 @@
     <link type="text/css" rel="stylesheet" href="./css/groundwork-anim.css">
     <link type="text/css" rel="stylesheet" href="./css/groundwork-ie.css">
     <![endif]-->
+
+    <link href="./css/jquery-ui.css" rel="stylesheet">
+    <script src="./js/libs/jquery.js"></script>
+    <script src="./js/libs/jquery-ui.js"></script>
 
     <link rel="stylesheet" href="./css/viz.css">
 </head>
@@ -86,6 +86,7 @@
                 <p><b>IDE: </b><a href = "https://www.jetbrains.com/phpstorm/">PhpStorm 10.0.3 by JetBrains (Educational License)</a></p>
                 <p><b>PHP Interpreter: </b><a href = "https://sourceforge.net/projects/xampp/">XAMPP</a></p>
                 <p><b>D3.js: </b><a href = "http://d3js.org">d3js.org</a></p>
+                <p><b>Datepicker: </b><a href = "http://api.jqueryui.com/datepicker/">jQuery UI</a></p>
                 <p><b>CSS Framework: </b><a href = "http://groundworkcss.github.io/groundwork/?url=docs/home">GroundworkCSS 2</a></p>
                 <p><b>PDF Conversion: </b><a href = "http://pdf2docx.com/de/">PDF2DOCX</a></p>
                 <p><b>CSV Generation: </b><a href = "https://products.office.com/de-de/excel">Microsoft Excel 2016</a></p>
@@ -108,12 +109,57 @@
             </div>
         </div>
     </div>
+
     <div id = "graphics" class = "row white-bg" style="overflow : auto;">
         <div id = "map" class = "row gapped"></div>
         <div id = "timescatter" class = "row gapped"></div>
         <div id = "country_legend" class = "row gapped"></div>
     </div>
-    <div id = "button_container" class = "row gapped">
+
+    <div id = "filter_container" class = "row padded">
+
+        <div class = "row">
+            <div id="circle_sizes" class = "two twelfth padded">
+                <p class="centered"><b>Circle Size</b></p>
+                <div id = "min_cs" class = "three eighth">
+                    <input id="min" type="text" placeholder="5" value="5">
+                </div>
+                <div class="two eighth align-center"><b>-</b></div>
+                <div id = "max_cs" class = "three eighth">
+                    <input id="max" type="text" placeholder="20" value="20">
+                </div>
+            </div>
+
+            <div id = "date_filter" class = "skip-one six twelfth padded">
+                <p class="centered"><b>Date Range</b></p>
+                <div id = "min_date" class = "five twelfth">
+                    <input type="text" id="min_datepicker">
+                </div>
+                <div class="one twelfth align-center">
+                    <b>-</b>
+                </div>
+                <div id = "max_date" class = "five twelfth">
+                    <input type="text" id="max_datepicker">
+                </div>
+            </div>
+
+            <div id = "yield_filter" class = "skip-one two twelfth padded">
+                <p class="centered"><b>Yield Range</b></p>
+                <div id = "min_y" class = "two fifth">
+                    <input id="miny" type="text" placeholder="0"  value="0">
+                </div>
+                <div class="one fifth align-center"><b>-</b></div>
+                <div id = "max_y" class = "two fifth">
+                    <input id="maxy" type="text" placeholder="50000" value="50000">
+                </div>
+            </div>
+        </div>
+        <div id="update_container" class="row">
+            <div id="update_filter_button" class="skip-one one third"></div>
+        </div>
+    </div>
+
+    <div id = "button_container" class = "row gapped padded">
         <div id = "bc_countries" class = "six twelfth">
             <div id = "b_deselect" class = "skip-two four twelfth"></div>
             <div id = "b_select" class = "four twelfth"></div>
@@ -122,15 +168,15 @@
         <div id = "bc_all" class = "skip-one two twelfth"></div>
     </div>
 
-    <div class="tabs">
+    <div class="tabs" style="height : 850px;">
         <ul role="tablist">
-            <li role="tab" aria-controls="#data">Data</li>
+            <li role="tab" aria-controls="#data" >Data</li>
             <li role="tab" aria-controls="#dataproc">Data Preprocessing</li>
             <li role="tab" aria-controls="#php">index.php</li>
             <li role="tab" aria-controls="#js">viz.js</li>
             <li role="tab" aria-controls="#css">viz.css</li>
         </ul>
-        <div id="data" role="tabpanel" style="overflow : auto;">
+        <div id="data" role="tabpanel" style="height : 800px; overflow : auto;">
             <?php
             echo "<html><body><table>\n\n";
             $f = fopen("./data/preproc_nuclear_weapon_tests.csv", "r");
@@ -144,24 +190,39 @@
             fclose($f);
             echo "\n</table></body></html>"; ?>
         </div>
-        <div id="dataproc" role="tabpanel" style="overflow : auto;">
+        <div id="dataproc" role="tabpanel" style="height : 800px; overflow : auto;">
             <script src="https://gist.github.com/tdraebing/8af24acaa3a4184156c8.js"></script>
         </div>
-        <div id="php" role="tabpanel" style="overflow : auto;">
+        <div id="php" role="tabpanel" style="height : 800px; overflow : auto;">
             <script src="https://gist.github.com/tdraebing/ccc5fce581c476cae41f.js"></script>
         </div>
-        <div id="js" role="tabpanel" style="overflow : auto;">
+        <div id="js" role="tabpanel" style="height : 800px; overflow : auto;">
             <script src="https://gist.github.com/tdraebing/b7838c4f6257d96e460e.js"></script>
         </div>
-        <div id="css" role="tabpanel" style="overflow : auto;">
+        <div id="css" role="tabpanel" style="height : 800px; overflow : auto;">
             <script src="https://gist.github.com/tdraebing/057b0ac35166f6c5d5b5.js"></script>
         </div>
     </div>
-
 </div>
 
 
-<script type="text/javascript" src="./js/libs/jquery-1.10.2.min.js"></script>
+<script src="./js/viz.js"></script>
+<script>
+    draw();
+</script>
+<script>
+    $( "#min_datepicker" ).datepicker({
+        changeYear: true,
+        changeMonth: true,
+        defaultDate: mindate
+    });
+    $( "#max_datepicker" ).datepicker({
+        changeYear: true,
+        changeMonth: true,
+        defaultDate: maxdate
+    });
+</script>
+
 <script type="text/javascript" src="./js/groundwork.all.js"></script>
 </body>
 </html>

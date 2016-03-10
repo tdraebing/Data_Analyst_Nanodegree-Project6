@@ -21,14 +21,14 @@ div.tooltip {
     position: absolute;
     text-align: center;
     width: 200px;
-    height: 125px;
+    height: 190px;
     padding: 2px;
     font-size: 12px;
     background: #34495e;
-    border: 0px;
+    border: 0;
     border-radius: 8px;
     pointer-events: none;
-    opacity: 0.125;
+    opacity: 0;
     color: white;
 }
 
@@ -38,6 +38,10 @@ div.tooltip {
     shape-rendering: crispEdges;
 }
 
+circle.greyed {
+    fill: lightgrey;
+    stroke: lightgrey;
+}
 
 #country_legend {
     font-size: 16px;
