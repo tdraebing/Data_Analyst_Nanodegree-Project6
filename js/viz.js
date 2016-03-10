@@ -123,7 +123,7 @@ var tip_text = function(d){
     }
 
 
-    var text = "Name: {0} <br/>".format(d.name)
+    return "Name: {0} <br/>".format(d.name)
             + "Date: {0}.{1}.{2} {3}:{4} <br/>".format(addZero(d.datetime.getUTCDate()),
                                                     addZero(d.datetime.getUTCMonth() + 1),
                                                     d.datetime.getUTCFullYear(),
@@ -136,9 +136,7 @@ var tip_text = function(d){
             + "Explosion Medium: {0}<br/>".format(d.medium)
             + "Confirmation: {0}<br/>".format(d.confirmation)
             + "Data Source: {0}<br/>".format(d.source);
-
-    return text;
-}
+};
 
 //DATA TRANSFORMATION
 function loadData(d,
@@ -166,7 +164,7 @@ function loadData(d,
 
 //DATA POINT SELECTION AND FILTERING
 
-var selectPoints = function(points, data) {
+var selectPoints = function(points) {
     d3.selectAll(points)
         .attr("r", function(){
             return circle_range[1];
@@ -182,7 +180,7 @@ var deselectPoints = function(points, data) {
         .attr("stroke", "none");
 };
 
-var selectCoord = function(coord, data) {
+var selectCoord = function(coord) {
     d3.select(coord)
         .attr("r", function(){
             return circle_range[1];
@@ -206,10 +204,10 @@ var deselectCoord = function(coord, data) {
         .attr('opacity', 0.7)
 };
 
-var onPointOver = function(point, data) {
-    selectPoints([point], data);
+var onPointOver = function(point) {
+    selectPoints([point]);
     var coord = d3.select("div#map").select('[index="' + point.__data__.index + '"]');
-    selectCoord(coord.node(), data);
+    selectCoord(coord.node());
 };
 
 var onPointOut = function(point, data) {
@@ -218,11 +216,11 @@ var onPointOut = function(point, data) {
     deselectCoord(coord.node(), data);
 };
 
-var onCoordOver = function(point, data) {
+var onCoordOver = function(point) {
     var coord = d3.select("div#map").select('[index="' + point.__data__.index + '"]');
-    selectCoord(coord.node(), data);
+    selectCoord(coord.node());
     var pointScat = d3.select("div#timescatter").select('[index="' + point.__data__.index + '"]');
-    selectPoints([pointScat.node()], data);
+    selectPoints([pointScat.node()]);
 
 };
 
@@ -247,15 +245,27 @@ function update(data){
         };
     }
 
+    var brush_ext = brush.extent();
+
+    //set form values
+    //dates
+    $( "#min_datepicker" ).datepicker( "setDate", brush_ext[0][0]);
+    $( "#max_datepicker" ).datepicker( "setDate", brush_ext[1][0] );
+
+    //yield
+    d3.select('input#miny')
+        .attr('value', brush_ext[0][1]);
+    d3.select('input#maxy')
+        .attr('value', brush_ext[1][1]);
+
     var selectedCountries = [];
 
     d3.select('div#country_legend')
                             .selectAll('circle.active')
-                            .each( function(d, i){
+                            .each( function(){
                                 selectedCountries.push( d3.select(this).attr("id") );
                             });
 
-        var brush_ext = brush.extent();
 
     var filtered_country = data.filter(function(d){
         if (selectedCountries.indexOf(d.Country) !== -1){
@@ -263,14 +273,16 @@ function update(data){
         }
     });
 
+    var filtered;
+
     if (brush_ext[0][1] > 55000){
-        var filtered = filtered_country;
+        filtered = filtered_country;
     }else {
-        var filtered = filtered_country.filter(function(d) {
-            return d.datetime >= brush_ext[0][0]
-                && d.datetime <= brush_ext[1][0]
-                && d.max_yield >= brush_ext[0][1]
-                && d.max_yield <= brush_ext[1][1];
+        filtered = filtered_country.filter(function(d) {
+        return d.datetime >= brush_ext[0][0]
+            && d.datetime <= brush_ext[1][0]
+            && d.max_yield >= brush_ext[0][1]
+            && d.max_yield <= brush_ext[1][1];
         });
     }
 
@@ -330,37 +342,37 @@ function plot_points(data) {
                     .data(data, function(d){return d.index;});
 
     //entering new circles
-    var circlesEnter = circles.enter()
-                                .append("circle")
-                                .attr('cx', function(d) {
-                                    return d.coords[0]; })
-                                .attr('cy', function(d) {
-                                    return d.coords[1]; })
-                                .attr('r', function(d) {
-                                    return get_radius(d['max_yield'], data);
-                                })
-                                .attr('fill', 'rgba(0, 0, 0, 0)')
-                                .attr('stroke', function(d) {
-                                    return cc[d.Country];
-                                })
-                                .attr('stroke-width', 1.5)
-                                .attr('opacity', 0.7)
-                                .attr('index', function(d){return d.index;})
-                                .on("mouseover", function(d) {
-                                    div.transition()
-                                        .duration(200)
-                                        .style("opacity", .9);
-                                    div.html(tip_text(d))
-                                        .style("left", (d3.event.pageX + 20) + "px")
-                                        .style("top", (d3.event.pageY - 28) + "px");
-                                    onCoordOver(this, data);
-                                })
-                                .on("mouseout", function(d) {
-                                    div.transition()
-                                        .duration(500)
-                                        .style("opacity", 0);
-                                    onCoordOut(this, data);
-                                });
+    circles.enter()
+            .append("circle")
+            .attr('cx', function(d) {
+                return d.coords[0]; })
+            .attr('cy', function(d) {
+                return d.coords[1]; })
+            .attr('r', function(d) {
+                return get_radius(d['max_yield'], data);
+            })
+            .attr('fill', 'rgba(0, 0, 0, 0)')
+            .attr('stroke', function(d) {
+                return cc[d.Country];
+            })
+            .attr('stroke-width', 1.5)
+            .attr('opacity', 0.7)
+            .attr('index', function(d){return d.index;})
+            .on("mouseover", function(d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                div.html(tip_text(d))
+                    .style("left", (d3.event.pageX + 20) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+                onCoordOver(this);
+            })
+            .on("mouseout", function() {
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+                onCoordOut(this, data);
+            });
 
     // removing filtered out data points
     circles.exit().remove();
@@ -474,9 +486,9 @@ function fill_timeline(data) {
             div.html(tip_text(d))
                 .style("left", (d3.event.pageX + 20) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
-            onPointOver(this, data);
+            onPointOver(this);
         })
-        .on("mouseout", function (d) {
+        .on("mouseout", function () {
             div.transition()
                 .duration(500)
                 .style("opacity", 0);
@@ -487,11 +499,6 @@ function fill_timeline(data) {
 // FILTERING COUNTRIES
 
 function country_filter(data){
-    //nest data for countries
-    var nest_country = d3.nest()
-        .key(function(d) { return d.Country; })
-        .entries(data);
-
     //create legend
     // Nest the entries by symbol
     var dataNest = d3.nest()
@@ -520,17 +527,12 @@ function country_filter(data){
             .classed('active', true)
             .style("fill", function() {
                 return cc[d.key]; })
-            .on('click', function(){
+            .on('click', function(d){
                 var active   = this.active ? false : true,
                     newOpacity = active ? 0.5 : 0.9;
                 d3.select(this)
                     .classed('active', function(){
-                        if (active){
-                            return false;
-                        } else{
-                            return true;
-                        }
-                    })
+                        return active;})
                     .transition()
                     .duration(200)
                     .style("opacity", newOpacity);
@@ -615,7 +617,6 @@ function filter_removal(data) {
         fill_timeline(data);
         d3.selectAll(".brush").call(brush.clear());
     }
-    console.log(d3.select('div#bc_all'))
     //create button for removing filters
     d3.select('div#bc_all')
         .append('input')
@@ -628,7 +629,6 @@ function filter_removal(data) {
 }
 
 function update_filters(data){
-    console.log(d3.select('div#update_filter_button'))
     function apply_filters(){
         //circle size
         var min_cs = d3.select('input#min').node().value;
@@ -652,11 +652,19 @@ function update_filters(data){
         //dates
         var min_date = d3.select('input#min_datepicker').node().value;
         var max_date = d3.select('input#max_datepicker').node().value;
-        console.log(min_date);
+        var pickerformat = d3.time.format("%m/%d/%Y");
+        var min_date_formatted = pickerformat.parse(min_date),
+            max_date_formatted = pickerformat.parse(max_date);
+
 
         //yield
         var min_yield = d3.select('input#miny').node().value;
         var max_yield = d3.select('input#maxy').node().value;
+
+        //draw brush
+        brush.extent([[min_date_formatted, min_yield],[max_date_formatted, max_yield]]);
+        brush(d3.select(".brush").transition());
+        brush.event(d3.select(".brush").transition().delay(1000));
 
     }
 
@@ -667,7 +675,6 @@ function update_filters(data){
         .attr("value", "Update")
         .attr("class", "block")
         .on("click", apply_filters);
-    console.log(d3.select('div#update_filter_button.skip-one.one.third').selectAll('input'))
 }
 
 // DRAW VISUALIZATION

@@ -100,6 +100,7 @@
                 <p><b>Maps in D3: </b><a href = "http://maptimeboston.github.io/d3-maptime/#/">Maptime Boston</a></p>
                 <p><b>Tooltips: </b><a href = "https://bl.ocks.org/d3noob/a22c42db65eb00d4e369">D3Noob</a></p>
                 <p><b>Brush Selection: </b><a href = "http://bl.ocks.org/mbostock/4349545">Mike Bostock</a></p>
+                <p><b>Brush Control: </b><a href = "http://bl.ocks.org/timelyportfolio/5c136de85de1c2abb6fc">Timely Portfolio</a></p>
                 <p><b>Interactive Legend: </b><a href = "http://bl.ocks.org/d3noob/5d621a60e2d1d02086bf">D3Noob</a></p>
                 <p><b>Misc: </b><a href = "http://stackoverflow.com">A lot of Stackoverflow</a></p>
 
@@ -133,13 +134,13 @@
             <div id = "date_filter" class = "skip-one six twelfth padded">
                 <p class="centered"><b>Date Range</b></p>
                 <div id = "min_date" class = "five twelfth">
-                    <input type="text" id="min_datepicker">
+                    <input type="text" id="min_datepicker" value="01/01/1944">
                 </div>
                 <div class="one twelfth align-center">
                     <b>-</b>
                 </div>
                 <div id = "max_date" class = "five twelfth">
-                    <input type="text" id="max_datepicker">
+                    <input type="text" id="max_datepicker" value="01/01/1999">
                 </div>
             </div>
 
@@ -214,11 +215,17 @@
     $( "#min_datepicker" ).datepicker({
         changeYear: true,
         changeMonth: true,
+        yearRange: "1944:1999",
+        minDate: mindate,
+        maxDate: maxdate,
         defaultDate: mindate
     });
     $( "#max_datepicker" ).datepicker({
         changeYear: true,
         changeMonth: true,
+        yearRange: "1944:1999",
+        minDate: mindate,
+        maxDate: maxdate,
         defaultDate: maxdate
     });
 </script>
