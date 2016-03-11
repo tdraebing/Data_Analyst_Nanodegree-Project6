@@ -14,8 +14,8 @@ var mindate = format.parse("1/1/1944 0:00:00 AM"),
 
 //defining sizes and scales for scatterplot
 var tl_size = {'margin' : {top: 30, right: 20, bottom: 30, left: 70},
-    'width' : 1150,
-    'height' : 500};
+                'width' : 1150,
+                'height' : 500};
 
 var tl_height = tl_size.height - tl_size.margin.top - tl_size.margin.bottom,
     tl_width = tl_size.width - tl_size.margin.left - tl_size.margin.right;
@@ -41,9 +41,10 @@ var circle_range = [5, 20];
 
 //extract radius
 function get_radius(d, data){
+    var extent = d3.extent(data, function(d){return d['max_yield'];});
     //radius for circles on map
     var radius = d3.scale.linear()
-        .domain(d3.extent(data, function(d){return d['max_yield'];}))
+        .domain(extent)
         .range(circle_range);
     return radius(d);
 }
@@ -57,29 +58,18 @@ function brushstart() {
     d3.select('brush').call(brush.clear());
 }
 
-
-// Highlight the selected circles.
-function brushmove(data) {
-    var e = brush.extent();
-    d3.select("#timescatter")
-        .select("svg")
-        .select('g.scatter')
-        .selectAll("circle")
-        .classed("greyed", function(d) {
-            return d.datetime <= e[0][0] || d.datetime >= e[1][0]
-                ||  d.max_yield <= e[0][1] || d.max_yield >= e[1][1];
-        });
-    update(data);
-}
-
 // If the brush is empty, select all circles.
 function brushend() {
+    var selectedCountries = get_selected_countries();
+
     if (brush.empty()) {
         d3.select("#timescatter")
             .select("svg")
             .select('g.scatter')
             .selectAll(".greyed")
-            .classed("greyed", false);
+            .classed("greyed", function(d) {
+                return selectedCountries.indexOf(d.Country) == -1;
+            });
     }
 }
 
@@ -231,6 +221,18 @@ var onCoordOut = function(point, data) {
     deselectPoints([pointScat.node()], data);
 };
 
+function get_selected_countries(){
+    var selectedCountries = [];
+
+    d3.select('div#country_legend')
+        .selectAll('circle.active')
+        .each( function(){
+            selectedCountries.push( d3.select(this).attr("id") );
+        });
+
+    return selectedCountries;
+}
+
 // Update plots for filtering purposes
 function update(data){
 
@@ -258,20 +260,36 @@ function update(data){
     d3.select('input#maxy')
         .attr('value', brush_ext[1][1]);
 
-    var selectedCountries = [];
-
-    d3.select('div#country_legend')
-                            .selectAll('circle.active')
-                            .each( function(){
-                                selectedCountries.push( d3.select(this).attr("id") );
-                            });
-
+    var selectedCountries = get_selected_countries();
 
     var filtered_country = data.filter(function(d){
         if (selectedCountries.indexOf(d.Country) !== -1){
             return d;
         }
     });
+
+    fill_timeline(filtered_country);
+
+    if (brush_ext[0][1] <= 90000){
+        d3.select("#timescatter")
+            .select("svg")
+            .select('g.scatter')
+            .selectAll("circle")
+            .classed("greyed", function(d) {
+                return d.datetime <= brush_ext[0][0] || d.datetime >= brush_ext[1][0]
+                    ||  d.max_yield <= brush_ext[0][1] || d.max_yield >= brush_ext[1][1];
+            });
+    } else{
+        d3.select("#timescatter")
+            .select("svg")
+            .select('g.scatter')
+            .selectAll(".greyed")
+            .classed("greyed", function(d) {
+                return selectedCountries.indexOf(d.Country) == -1;
+            });
+    }
+
+
 
     var filtered;
 
@@ -287,7 +305,6 @@ function update(data){
     }
 
     plot_points(filtered);
-    fill_timeline(filtered);
 }
 
 //MAP
@@ -423,18 +440,20 @@ function timeline(data){
         .style("text-anchor", "end")
         .text("Maximum Reported Yield [kt]");
 
+
     //creating and adding brush for filtering
 
     brush.x(tl_scales.x)
         .y(tl_scales.y)
         .on("brushstart", brushstart)
-        .on("brush", function(){brushmove(data);})
+        .on("brush", function(){update(data);})
         .on("brushend", brushend);
 
     tl_svg.append("g")
         .attr("class", "brush")
         .call(brush)
         .selectAll("rect")
+
 }
 
 
@@ -494,6 +513,10 @@ function fill_timeline(data) {
                 .style("opacity", 0);
             onPointOut(this, data);
         });
+
+
+
+    circles.exit().remove();
 }
 
 // FILTERING COUNTRIES
@@ -615,8 +638,14 @@ function filter_removal(data) {
     function remove_filters() {
         plot_points(data);
         fill_timeline(data);
+        d3.select("#timescatter")
+            .select("svg")
+            .select('g.scatter')
+            .selectAll(".greyed")
+            .classed("greyed", false);
         d3.selectAll(".brush").call(brush.clear());
     }
+
     //create button for removing filters
     d3.select('div#bc_all')
         .append('input')
@@ -625,7 +654,25 @@ function filter_removal(data) {
         .attr("value", "Remove all Filters")
         .attr("class", "block")
         .on("click", remove_filters);
-    console.log(d3.select('div#bc_all').selectAll('input'))
+}
+
+function control_brush(){
+    //dates
+    var min_date = d3.select('input#min_datepicker').node().value;
+    var max_date = d3.select('input#max_datepicker').node().value;
+    var pickerformat = d3.time.format("%m/%d/%Y");
+    var min_date_formatted = pickerformat.parse(min_date),
+        max_date_formatted = pickerformat.parse(max_date);
+
+
+    //yield
+    var min_yield = d3.select('input#miny').node().value;
+    var max_yield = d3.select('input#maxy').node().value;
+
+    //draw brush
+    brush.extent([[min_date_formatted, min_yield],[max_date_formatted, max_yield]]);
+    brush(d3.select(".brush").transition());
+    brush.event(d3.select(".brush").transition().delay(1000));
 }
 
 function update_filters(data){
@@ -634,7 +681,6 @@ function update_filters(data){
         var min_cs = d3.select('input#min').node().value;
         var max_cs = d3.select('input#max').node().value;
         circle_range = [min_cs, max_cs];
-        console.log(circle_range);
         d3.select("#map")
             .select("svg")
             .selectAll("circle")
@@ -649,22 +695,7 @@ function update_filters(data){
                 return get_radius(d['max_yield'], data);
             });
 
-        //dates
-        var min_date = d3.select('input#min_datepicker').node().value;
-        var max_date = d3.select('input#max_datepicker').node().value;
-        var pickerformat = d3.time.format("%m/%d/%Y");
-        var min_date_formatted = pickerformat.parse(min_date),
-            max_date_formatted = pickerformat.parse(max_date);
-
-
-        //yield
-        var min_yield = d3.select('input#miny').node().value;
-        var max_yield = d3.select('input#maxy').node().value;
-
-        //draw brush
-        brush.extent([[min_date_formatted, min_yield],[max_date_formatted, max_yield]]);
-        brush(d3.select(".brush").transition());
-        brush.event(d3.select(".brush").transition().delay(1000));
+        control_brush();
 
     }
 
