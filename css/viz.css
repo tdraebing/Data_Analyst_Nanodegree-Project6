@@ -39,6 +39,7 @@ div.tooltip {
 }
 
 circle.greyed {
+    opacity: 0.1;
     fill: lightgrey;
     stroke: lightgrey;
 }
