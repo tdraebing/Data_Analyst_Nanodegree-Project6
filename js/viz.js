@@ -235,7 +235,6 @@ function get_selected_countries(){
 
 // Update plots for filtering purposes
 function update(data){
-
     //for IE users...I know...WHY?
     if (!Array.prototype.indexOf) {
         Array.prototype.indexOf = function(item) {
@@ -552,7 +551,7 @@ function country_filter(data){
                 return cc[d.key]; })
             .on('click', function(d){
                 var active   = this.active ? false : true,
-                    newOpacity = active ? 0.5 : 0.9;
+                    newOpacity = active ? 0.9 : 0.5;
                 d3.select(this)
                     .classed('active', function(){
                         return active;})
