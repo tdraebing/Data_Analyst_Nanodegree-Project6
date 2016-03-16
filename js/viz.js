@@ -355,7 +355,10 @@ function plot_points(data) {
     var circles = d3.select("#map")
                     .select("svg")
                     .selectAll("circle")
-                    .data(data, function(d){return d.index;});
+                    .data(data, function(d){return d.index;})
+                    .attr('r', function(d) {
+                        return get_radius(d['max_yield'], data);
+                    });
 
     //entering new circles
     circles.enter()
@@ -471,6 +474,9 @@ function fill_timeline(data) {
         .selectAll("circle")
         .data(data, function (d) {
             return d.index;
+        })
+        .attr('r', function (d) {
+            return get_radius(d['max_yield'], data);
         });
 
     // Enter new data
