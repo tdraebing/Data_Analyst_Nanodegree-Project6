@@ -549,8 +549,8 @@ function country_filter(data){
             .classed('active', true)
             .style("fill", function() {
                 return cc[d.key]; })
-            .on('click', function(d){
-                var active   = this.active ? false : true,
+            .on('click', function(){
+                var active   = d3.select(this).classed('active') ? false : true,
                     newOpacity = active ? 0.9 : 0.5;
                 d3.select(this)
                     .classed('active', function(){
@@ -558,7 +558,6 @@ function country_filter(data){
                     .transition()
                     .duration(200)
                     .style("opacity", newOpacity);
-                this.active = active;
                 update(data);
                 });
 
@@ -574,26 +573,27 @@ function country_filter(data){
 
 // COUNTRY SELECTION BUTTONS
 
-function country_buttons(data){
-    function deselect_Countries(){
-        d3.select('#country_legend')
-            .selectAll('circle')
-            .classed('active', false)
-            .transition()
-            .duration(200)
-            .style("opacity", 0.5);
-        update(data);
-    }
+function deselect_Countries(data){
+    d3.select('#country_legend')
+        .selectAll('circle')
+        .classed('active', false)
+        .transition()
+        .duration(200)
+        .style("opacity", 0.5);
+    update(data);
+}
 
-    function select_Countries(){
-        d3.select('#country_legend')
-            .selectAll('circle')
-            .classed('active', true)
-            .transition()
-            .duration(200)
-            .style("opacity", 0.9);
-        update(data);
-    }
+function select_Countries(data){
+    d3.select('#country_legend')
+        .selectAll('circle')
+        .classed('active', true)
+        .transition()
+        .duration(200)
+        .style("opacity", 0.9);
+    update(data);
+}
+
+function country_buttons(data){
 
     //create button for deselecting all
     d3.select('div#b_deselect')
@@ -602,7 +602,7 @@ function country_buttons(data){
         .attr("name", "deselectAll")
         .attr("value", "Deselect all Countries")
         .attr("class", "block")
-        .on("click", deselect_Countries);
+        .on("click", function(){deselect_Countries(data);});
 
     //create button for selecting all
     d3.select('div#b_select')
@@ -611,7 +611,7 @@ function country_buttons(data){
         .attr("name", "selectAll")
         .attr("value", "Select all Countries")
         .attr("class", "block")
-        .on("click", select_Countries);
+        .on("click", function(){select_Countries(data);});
 }
 
 // REMOVE SELECTION
@@ -625,7 +625,7 @@ function selection_removal(data) {
         .attr("class", "block")
         .on("click", function(){
             d3.selectAll(".brush").call(brush.clear());
-            update(data)
+            update(data);
         });
 
 }
@@ -635,14 +635,13 @@ function selection_removal(data) {
 function filter_removal(data) {
     //reverse filters
     function remove_filters() {
-        plot_points(data);
-        fill_timeline(data);
         d3.select("#timescatter")
             .select("svg")
             .select('g.scatter')
             .selectAll(".greyed")
             .classed("greyed", false);
         d3.selectAll(".brush").call(brush.clear());
+        select_Countries(data);
     }
 
     //create button for removing filters
