@@ -169,22 +169,6 @@
         <div id = "bc_all" class = "skip-one two twelfth"></div>
     </div>
 
-    <div class="row">
-        <div id="mode_selector" class="one whole padded">
-            <label for="zoom">Zoom or Select:</label>
-            <ul class="unstyled zero">
-                <li>
-                    <input id="zoom" type="radio" name="zoom_radio" checked="">
-                    <label for="zoom" class="inline">Zoom</label>
-                </li>
-                <li>
-                    <input id="brush" type="radio" name="zoom_radio">
-                    <label for="brush" class="inline">Select</label>
-                </li>
-            </ul>
-        </div>
-    </div>
-
     <div class="tabs" style="height : 850px;">
         <ul role="tablist">
             <li role="tab" aria-controls="#data" >Data</li>

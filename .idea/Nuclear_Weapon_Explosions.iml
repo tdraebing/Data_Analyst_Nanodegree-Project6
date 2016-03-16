@@ -8,10 +8,10 @@
     <orderEntry type="module-library">
       <library name="PHP">
         <CLASSES>
-          <root url="file://D:/Programming/xampp" />
+          <root url="file://D:/Programming/XAMPP" />
         </CLASSES>
         <SOURCES>
-          <root url="file://D:/Programming/xampp" />
+          <root url="file://D:/Programming/XAMPP" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -31,5 +31,6 @@
     <orderEntry type="library" name="ccc5fce581c476cae41f" level="application" />
     <orderEntry type="library" name="b7838c4f6257d96e460e" level="application" />
     <orderEntry type="library" name="057b0ac35166f6c5d5b5" level="application" />
+    <orderEntry type="library" name="d3.v3" level="application" />
   </component>
 </module>

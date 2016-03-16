@@ -49,7 +49,6 @@ function get_radius(d, data){
     return radius(d);
 }
 
-var mode = 'zoom';
 
 // Define the brush for selection
 var brush = d3.svg.brush();
@@ -450,75 +449,10 @@ function timeline(data){
         .on("brush", function(){update(data);})
         .on("brushend", brushend);
 
-    //Zoom or brush
-    zoom_or_brush(mode);
-
-    //ZOOM
-
-
-
-
-    d3.selectAll("#mode_selector input[name=zoom_radio]")
-        .on("change", function() {
-            mode = this.value;
-            zoom_or_brush(mode);
-        });
-
-    function inject_zoom(){
-        var zoom_behavior = d3.behavior.zoom()
-            .x(tl_scales.x)
-            .y(tl_scales.y)
-            .scaleExtent([1, 8])
-            .on("zoom", zoom);
-
-        var scatter = d3.select('div#timescatter')
-            .select('svg');
-
-        console.log(zoom_behavior)
-
-        scatter.call(zoom_behavior);
-        scatter.select('g.scatter')
-            .select('.brush').remove();
-    }
-
-    function inject_brush(){
-        var scatter = d3.select('div#timescatter')
-            .select('svg')
-            .select('g.scatter');
-
-        scatter.call(d3.behavior.zoom().on('zoom', null));
-
-        scatter.append("g")
-            .attr("class", "brush")
-            .call(brush)
-            .selectAll("rect");
-    }
-
-    function zoom_or_brush(mode) {
-        return mode == "zoom"
-            ? inject_zoom()
-            : inject_brush();
-    }
-
-
-
-
-    function zoom() {
-        console.log(1)
-        var svg = d3.select("#timescatter")
-            .select("svg");
-
-        svg.select('g.scatter')
-            .selectAll("circle")
-            .attr("transform", zoom_transform);
-
-        svg.select(".x.axis").call(xAxis);
-        svg.select(".y.axis").call(yAxis);
-    }
-
-    function zoom_transform(d) {
-        return "translate(" + tl_scales.x(d.datetime) + "," + tl_scales.y(d.max_yield) + ")";
-    }
+    tl_svg.append("g")
+        .attr("class", "brush")
+        .call(brush)
+        .selectAll("rect")
 
 }
 
