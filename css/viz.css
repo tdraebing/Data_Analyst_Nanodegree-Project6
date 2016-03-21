@@ -49,3 +49,9 @@ circle.greyed {
     font-weight: bold;
     text-anchor: middle;
 }
+
+.bar text {
+    fill: black;
+    font: 10px sans-serif;
+    text-anchor: end;
+}

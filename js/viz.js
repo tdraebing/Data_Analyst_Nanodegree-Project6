@@ -12,20 +12,42 @@ var format = d3.time.format("%m/%d/%Y %I:%M:%S %p");
 var mindate = format.parse("1/1/1944 0:00:00 AM"),
     maxdate = format.parse("1/1/2000 0:00:00 AM");
 
-//defining sizes and scales for scatterplot
-var tl_size = {'margin' : {top: 30, right: 20, bottom: 30, left: 70},
-                'width' : 1150,
-                'height' : 500};
+//dimensions
+var dimensions = {'map' : {'margin' : 20,
+                            'width' : 1200,
+                            'height' : 700},
+                'scatter' : {'margin' : 60,
+                            'width' : 1200,
+                            'height' : 500},
+                'bar_exp' : {'margin' : {'left' : 100, 'right' : 20, 'bottom' : 60, 'top' : 10},
+                            'width' : 600,
+                            'height' : 500}};
 
-var tl_height = tl_size.height - tl_size.margin.top - tl_size.margin.bottom,
-    tl_width = tl_size.width - tl_size.margin.left - tl_size.margin.right;
+//define map projection
+var projection = d3.geo.mercator()
+    .scale(185)
+    .translate([(dimensions.map.width - dimensions.map.margin) / 2.05,
+        (dimensions.map.height - dimensions.map.margin) / 1.6]);
 
-var tl_scales = {'x' : d3.time.scale.utc()
+
+var scales = {'scatter' : {'x' : d3.time.scale.utc()
                               .domain([mindate, maxdate])
-                              .range([0, tl_width]),
-                 'y' : d3.scale.log()
+                              .range([0, dimensions.scatter.width - 2 * dimensions.scatter.margin]),
+                            'y' : d3.scale.log()
                               .domain([Math.pow(10, -5), Math.pow(10, 6)])
-                              .range([tl_height, 0])};
+                              .range([dimensions.scatter.height - 2 * dimensions.scatter.margin, 0])},
+            'bar_exp' : {'y' : d3.scale.ordinal()
+                                    .domain(["Russia", "China", "USA", "England", "France", "India", "Pakistan", "Unknown"])
+                                    .rangeRoundBands([0, dimensions.bar_exp.height - dimensions.bar_exp.margin.bottom - dimensions.bar_exp.margin.top], .01),
+                        'x' : d3.scale.log()
+                                .domain([Math.pow(10, 0), Math.pow(10, 3.5)])
+                                .range([1, dimensions.bar_exp.width - dimensions.bar_exp.margin.left - dimensions.bar_exp.margin.right])},
+            'bar_yield' : {'y' : d3.scale.ordinal()
+                                    .domain(["Russia", "China", "USA", "England", "France", "India", "Pakistan", "Unknown"])
+                                    .rangeRoundBands([0, dimensions.bar_exp.height - dimensions.bar_exp.margin.bottom - dimensions.bar_exp.margin.top], .01),
+                'x' : d3.scale.log()
+                                    .domain([Math.pow(10, -5), Math.pow(10, 7)])
+                                    .range([1, dimensions.bar_exp.width - dimensions.bar_exp.margin.left - dimensions.bar_exp.margin.right])}};
 
 //define colors for each country
 var cc = {'Russia' : 'DarkRed',
@@ -129,8 +151,7 @@ var tip_text = function(d){
 };
 
 //DATA TRANSFORMATION
-function loadData(d,
-                  projection)  {
+function loadData(d)  {
     var new_d = {};
     new_d['index'] = +d[''];
     if (+d['max_yield'] == 0){
@@ -309,9 +330,7 @@ function update(data){
 //MAP
 
 //create map
-function map_draw(geo_data,
-                  size,
-                  projection) {
+function map_draw(geo_data) {
 
     //translate to screen coordinates
     var path = d3.geo.path()
@@ -320,8 +339,8 @@ function map_draw(geo_data,
     //create svg
     var svg_map = d3.select("#map")
         .append("svg")
-        .attr("width", size.width)
-        .attr("height", size.height)
+        .attr("width", dimensions.map.width)
+        .attr("height", dimensions.map.height)
         .append('g')
         .attr('class', 'map');
 
@@ -355,7 +374,9 @@ function plot_points(data) {
     var circles = d3.select("#map")
                     .select("svg")
                     .selectAll("circle")
-                    .data(data, function(d){return d.index;})
+                    .data(data, function(d){
+                        return d.index;
+                    })
                     .attr('r', function(d) {
                         return get_radius(d['max_yield'], data);
                     });
@@ -405,30 +426,30 @@ function timeline(data){
     //Adding svg + plot
     var tl_svg = d3.select("#timescatter")
         .append("svg")
-        .attr("width", tl_size.width)
-        .attr("height", tl_size.height)
+        .attr("width", dimensions.scatter.width)
+        .attr("height", dimensions.scatter.height)
         .append("g")
         .attr("class", "scatter")
-        .attr("transform", "translate(" + tl_size.margin.left + "," + tl_size.margin.top + ")");
+        .attr("transform", "translate(" + dimensions.scatter.margin + "," + dimensions.scatter.margin + ")");
 
     //defining and adding axes
     var xAxis = d3.svg.axis()
-        .scale(tl_scales.x)
+        .scale(scales.scatter.x)
         .orient("bottom");
 
     tl_svg.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0," + tl_height + ")")
+        .attr("transform", "translate(0," + (dimensions.scatter.height - 2 * dimensions.scatter.margin) + ")")
         .call(xAxis)
         .append("text")
         .attr("class", "label")
-        .attr("x", tl_width)
+        .attr("x", dimensions.scatter.width - 2 * dimensions.scatter.margin)
         .attr("y", -6)
         .style("text-anchor", "end")
         .text("Time");
 
     var yAxis = d3.svg.axis()
-        .scale(tl_scales.y)
+        .scale(scales.scatter.y)
         .orient("left");
 
     tl_svg.append("g")
@@ -445,8 +466,8 @@ function timeline(data){
 
     //creating and adding brush for filtering
 
-    brush.x(tl_scales.x)
-        .y(tl_scales.y)
+    brush.x(scales.scatter.x)
+        .y(scales.scatter.y)
         .on("brushstart", brushstart)
         .on("brush", function(){update(data);})
         .on("brushend", brushend);
@@ -486,10 +507,10 @@ function fill_timeline(data) {
             return get_radius(d['max_yield'], data);
         })
         .attr("cx", function (d) {
-            return tl_scales.x(d.datetime);
+            return scales.scatter.x(d.datetime);
         })
         .attr("cy", function (d) {
-            return tl_scales.y(d.max_yield);
+            return scales.scatter.y(d.max_yield);
         })
         .attr("fill", function (d) {
             return cc[d.Country];
@@ -522,6 +543,166 @@ function fill_timeline(data) {
 
 
     circles.exit().remove();
+}
+
+// BAR PLOTS
+
+// total explosions
+function build_bar_te(data){
+    var chart = d3.select('div#test_count')
+        .append('svg')
+        .attr('class', 'bar_exp_svg')
+        .attr("width", dimensions.bar_exp.width)
+        .attr("height", dimensions.bar_exp.height)
+        .append("g")
+        .attr("class", "bar_exp")
+        .attr("transform", "translate(" + dimensions.bar_exp.margin.left + "," + dimensions.bar_exp.margin.top + ")");
+
+    //defining and adding axes
+    var xAxis = d3.svg.axis()
+        .scale(scales.bar_exp.x)
+        .orient("bottom")
+        .ticks(3);
+
+    chart.append("g")
+        .attr("class", "x axis")
+        .attr("transform",
+            "translate(0," + (dimensions.bar_exp.height - dimensions.bar_exp.margin.bottom - dimensions.bar_exp.margin.top) + ")")
+        .call(xAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", (dimensions.bar_exp.width - dimensions.bar_exp.margin.right - dimensions.bar_exp.margin.left))
+        .attr("y", -6)
+        .style("text-anchor", "end")
+        .text("Test Count");
+
+    var yAxis = d3.svg.axis()
+        .scale(scales.bar_exp.y)
+        .orient("left");
+
+    chart.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+}
+
+function total_exp(data){
+    var agg_exp = function(leaves){
+                    return d3.sum(leaves, function() {
+                                            return 1;
+                                        });
+
+                    };
+
+    var te_nested = d3.nest()
+                        .key(function(d) {return d.Country;})
+                        .rollup(agg_exp)
+                        .entries(data);
+
+
+    var bar = d3.select('#test_count')
+        .select("svg")
+        .select('g.bar_exp')
+        .selectAll(".bar")
+        .data(te_nested)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("y", function(d) {
+            return scales.bar_exp.y(d.key);
+        })
+        .attr("width", function(d) {
+            return scales.bar_exp.x(d.values);
+        })
+        .attr("height", scales.bar_exp.y.rangeBand())
+        .attr("x", 1)
+        .attr("fill", function (d) {
+            return cc[d.key];
+        })
+        .attr('opacity', 0.7)
+        .append("text")
+        .attr("x", function(d) { return 20; })
+        .attr("y", scales.bar_exp.y.rangeBand() / 2)
+        .attr("dy", ".35em")
+        .text(function(d) { return d.values; });
+}
+
+// total yield
+function build_bar_yield(data){
+    var chart = d3.select('div#acc_yield')
+        .append('svg')
+        .attr('class', 'bar_yield_svg')
+        .attr("width", dimensions.bar_exp.width)
+        .attr("height", dimensions.bar_exp.height)
+        .append("g")
+        .attr("class", "bar_yield")
+        .attr("transform", "translate(" + dimensions.bar_exp.margin.left + "," + dimensions.bar_exp.margin.top + ")");
+
+    //defining and adding axes
+    var xAxis = d3.svg.axis()
+        .scale(scales.bar_yield.x)
+        .orient("bottom")
+        .ticks(3);
+
+    chart.append("g")
+        .attr("class", "x axis")
+        .attr("transform",
+            "translate(0," + (dimensions.bar_exp.height - dimensions.bar_exp.margin.bottom - dimensions.bar_exp.margin.top) + ")")
+        .call(xAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", (dimensions.bar_exp.width - dimensions.bar_exp.margin.right - dimensions.bar_exp.margin.left))
+        .attr("y", -6)
+        .style("text-anchor", "end")
+        .text("Yield [kt]");
+
+    var yAxis = d3.svg.axis()
+        .scale(scales.bar_yield.y)
+        .orient("left");
+
+    chart.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+}
+
+function total_yield(data){
+    var agg_yield = function(leaves){
+        return d3.sum(leaves, function(d) {
+            return d['max_yield'];
+        });
+
+    };
+
+    var te_nested = d3.nest()
+        .key(function(d) {return d.Country;})
+        .rollup(agg_yield)
+        .entries(data);
+
+
+    var bar = d3.select('#acc_yield')
+        .select("svg")
+        .select('g.bar_yield')
+        .selectAll(".bar")
+        .data(te_nested)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("y", function(d) {
+            return scales.bar_yield.y(d.key);
+        })
+        .attr("width", function(d) {
+            return scales.bar_yield.x(d.values);
+        })
+        .attr("height", scales.bar_yield.y.rangeBand())
+        .attr("x", 1)
+        .attr("fill", function (d) {
+            return cc[d.key];
+        })
+        .attr('opacity', 0.7)
+        .append("text")
+        .attr("x", function(d) { return 20; })
+        .attr("y", scales.bar_yield.y.rangeBand() / 2)
+        .attr("dy", ".35em")
+        .text(function(d) { return d.values; });
 }
 
 // FILTERING COUNTRIES
@@ -715,32 +896,16 @@ function update_filters(data){
 // DRAW VISUALIZATION
 
 function draw(){
-    //define map parameters
-    //set figure proportions
-
-    var size_map = {'margin' : 20,
-        'width' : 1200,
-        'height' : 700};
-
-    //define map projection
-    var projection = d3.geo.mercator()
-        .scale(185)
-        .translate([(size_map.width - size_map.margin) / 2.05,
-            (size_map.height - size_map.margin) / 1.6]);
-
-
     //draw map
     d3.json("./data/map/world_countries.json",
         function (d){
-            map_draw(d,
-                size_map,
-                projection)
+            map_draw(d)
         });
 
     //create data dependent objects
     d3.csv("./data/preproc_nuclear_weapon_tests.csv",
         function (d) {
-            return loadData(d, projection);
+            return loadData(d);
         },
         function (d) {
             country_filter(d);
@@ -751,6 +916,10 @@ function draw(){
             plot_points(d);
             timeline(d);
             fill_timeline(d);
+            build_bar_te(d);
+            build_bar_yield(d);
+            total_exp(d);
+            total_yield(d);
         });
 
 }
