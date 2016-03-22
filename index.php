@@ -113,8 +113,8 @@
 
     <div id = "graphics" class = "row white-bg" style="overflow : auto;">
         <div id = "barchart_container" class = "row">
-            <div id = "test_count" class = "five eleventh"></div>
-            <div id = "acc_yield" class = "skip-one five eleventh"></div>
+            <div id = "bar_test_count" class = "row"></div>
+            <div id = "bar_yield" class = "row"></div>
         </div>
         <div id = "map" class = "row gapped"></div>
         <div id = "timescatter" class = "row gapped"></div>
