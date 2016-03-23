@@ -37,13 +37,9 @@ var scales = {'scatter' : {'x' : d3.time.scale.utc()
                               .domain([Math.pow(10, -5), Math.pow(10, 6)])
                               .range([dimensions.scatter.height - 2 * dimensions.scatter.margin, 0])},
             'bar_exp' : {'x' : d3.scale.linear()
-                                .range([1, dimensions.bar_exp.width - dimensions.bar_exp.margin - dimensions.bar_exp.margin])},
-            'bar_yield' : {'y' : d3.scale.ordinal()
-                                    .domain(["Russia", "China", "USA", "England", "France", "India", "Pakistan", "Unknown"])
-                                    .rangeRoundBands([0, dimensions.bar_exp.height - dimensions.bar_exp.margin.bottom - dimensions.bar_exp.margin.top], .01),
-                            'x' : d3.scale.log()
-                                    .domain([Math.pow(10, -5), Math.pow(10, 7)])
-                                    .range([1, dimensions.bar_exp.width - dimensions.bar_exp.margin.left - dimensions.bar_exp.margin.right])}};
+                                .range([0, dimensions.bar_exp.width - 2 * dimensions.bar_exp.margin])},
+            'bar_yield' : {'x' : d3.scale.linear()
+                                .range([0, dimensions.bar_exp.width - 2 * dimensions.bar_exp.margin])}};
 
 //define colors for each country
 var cc = {'Russia' : 'DarkRed',
@@ -321,6 +317,8 @@ function update(data){
     }
 
     plot_points(filtered);
+    total_exp(filtered);
+    total_yield(filtered);
 }
 
 //MAP
@@ -491,9 +489,6 @@ function fill_timeline(data) {
         .selectAll("circle")
         .data(data, function (d) {
             return d.index;
-        })
-        .attr('r', function (d) {
-            return get_radius(d['max_yield'], data);
         });
 
     // Enter new data
@@ -554,6 +549,13 @@ function build_bar_te(data){
         .attr("class", "bar_exp")
         .attr("transform", "translate(" + dimensions.bar_exp.margin + "," + dimensions.bar_exp.margin + ")");
 
+    var title = chart.append("text")
+        .attr("class", "label")
+        .attr("x", (dimensions.bar_exp.width/2))
+        .attr("y", -6)
+        .style("text-anchor", "middle")
+        .text("Total Explosions");
+
     //defining and adding axes
     var xAxis = d3.svg.axis()
         .scale(scales.bar_exp.x)
@@ -564,13 +566,7 @@ function build_bar_te(data){
         .attr("class", "x axis")
         .attr("transform",
             "translate(0," + (dimensions.bar_exp.height - dimensions.bar_exp.margin - dimensions.bar_exp.margin) + ")")
-        .call(xAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("x", (dimensions.bar_exp.width - dimensions.bar_exp.margin - dimensions.bar_exp.margin))
-        .attr("y", -6)
-        .style("text-anchor", "end")
-        .text("Test Count");
+        .call(xAxis);
 
 }
 
@@ -605,6 +601,22 @@ function total_exp(data){
 
     scales.bar_exp.x.domain([0, total]);
 
+    var xAxis = d3.svg.axis()
+        .scale(scales.bar_exp.x)
+        .orient("bottom")
+        .ticks(10);
+
+    d3.select('#bar_test_count')
+        .select("svg")
+        .selectAll(".axis")
+        .call(xAxis);
+
+    d3.select('#bar_test_count')
+        .select("svg")
+        .select('g.bar_exp')
+        .selectAll(".bar")
+        .remove();
+
     var bar = d3.select('#bar_test_count')
         .select("svg")
         .select('g.bar_exp')
@@ -615,7 +627,7 @@ function total_exp(data){
         .attr("class", "bar")
         .attr("y", 0)
         .attr('x', function(d) {
-            return scales.bar_exp.x(d.y0 + 1);
+            return scales.bar_exp.x(d.y0);
         })
         .attr("width", function(d) {
             return scales.bar_exp.x(d.value);
@@ -624,25 +636,110 @@ function total_exp(data){
         .attr("fill", function (d) {
             return cc[d.key];
         })
-        .attr('opacity', 0.7)
-
-    var text = d3.select('#bar_test_count')
-         .select("svg")
-         .select('g.bar_exp')
-         .selectAll(".text")
-        .data(stack_data(te_nested))
-        .enter()
-        .append("text")
-        .attr("class", function(d) {
-            console.log(d)
-            return "label " + d.key;})
-        .attr("x", function(d, i) {return d.y0 * i + 15;})
-        .attr("y", 5)
-        .text( function(d) {return d.value;})
-        .attr("font-size", "15px")
-        .style("font-weight", "bold");
+        .attr('opacity', 0.7);
 }
 
+// total yield
+function build_bar_yield(data){
+    var chart = d3.select('div#bar_yield')
+        .append('svg')
+        .attr('class', 'bar_yield_svg')
+        .attr("width", dimensions.bar_exp.width)
+        .attr("height", dimensions.bar_exp.height)
+        .append("g")
+        .attr("class", "bar_yield_exp")
+        .attr("transform", "translate(" + dimensions.bar_exp.margin + "," + dimensions.bar_exp.margin + ")")
+
+    var title = chart.append("text")
+        .attr("class", "label")
+        .attr("x", (dimensions.bar_exp.width/2))
+        .attr("y", -6)
+        .style("text-anchor", "middle")
+        .text("Total Yield");
+
+    //defining and adding axes
+    var xAxis = d3.svg.axis()
+        .scale(scales.bar_yield.x)
+        .orient("bottom")
+        .ticks(10);
+
+    chart.append("g")
+        .attr("class", "x axis")
+        .call(xAxis)
+        .attr("transform",
+        "translate(0," + (dimensions.bar_exp.height - dimensions.bar_exp.margin - dimensions.bar_exp.margin) + ")")
+
+
+}
+
+function total_yield(data){
+    var agg_yield = function(leaves){
+        return d3.sum(leaves, function(d) {
+            return d.max_yield;
+        });
+
+    };
+
+
+    var te_nested = d3.nest()
+        .key(function(d) {return d.Country;})
+        .rollup(agg_yield)
+        .entries(data);
+
+    var stack_data = function(data){
+        var ar = [];
+        var y0 = 0;
+        for (var d in data){
+            ar[d] = {'key' : data[d].key,
+                'y0' : y0,
+                'y1' : y0 + data[d].values,
+                'value' : data[d].values};
+            y0 = y0 + data[d].values;
+        }
+        return ar;
+    };
+
+    var total = d3.sum(te_nested, function(d){return d.values;});
+
+    scales.bar_yield.x.domain([0, total]);
+
+    var xAxis = d3.svg.axis()
+        .scale(scales.bar_yield.x)
+        .orient("bottom")
+        .ticks(10);
+
+    d3.select('#bar_yield')
+        .select("svg")
+        .select('g.bar_yield_exp')
+        .selectAll(".bar")
+        .remove();
+
+    d3.select('#bar_yield')
+        .select("svg")
+        .selectAll(".axis")
+        .call(xAxis);
+
+    var bar = d3.select('#bar_yield')
+        .select("svg")
+        .select('g.bar_yield_exp')
+        .selectAll(".bar")
+        .data(stack_data(te_nested))
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("y", 0)
+        .attr('x', function(d) {
+            return scales.bar_yield.x(d.y0);
+        })
+        .attr("width", function(d) {
+            return scales.bar_yield.x(d.value);
+        })
+        .attr("height", dimensions.bar_exp.height - 2 * dimensions.bar_exp.margin)
+        .attr("fill", function (d) {
+            return cc[d.key];
+        })
+        .attr('opacity', 0.7);
+}
 
 // FILTERING COUNTRIES
 
@@ -857,6 +954,8 @@ function draw(){
             fill_timeline(d);
             build_bar_te(d);
             total_exp(d);
+            build_bar_yield(d);
+            total_yield(d);
         });
 
 }
