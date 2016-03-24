@@ -7,6 +7,7 @@
 
 //define date format
 var format = d3.time.format("%m/%d/%Y %I:%M:%S %p");
+var yearformat = d3.time.format("%Y");
 
 //define date range for scatterplot
 var mindate = format.parse("1/1/1944 0:00:00 AM"),
@@ -39,8 +40,8 @@ var scales = {'scatter' : {'x' : d3.time.scale.utc()
                             'y' : d3.scale.log()
                               .domain([Math.pow(10, -5), Math.pow(10, 6)])
                               .range([dimensions.scatter.height - 2 * dimensions.scatter.margin, 0])},
-            'line' : {'x' : d3.scale.linear()
-                                        .domain([1945, 1998])
+            'line' : {'x' : d3.time.scale.utc()
+                                        .domain([yearformat.parse('1945'), yearformat.parse('1998')])
                                         .range([0, dimensions.line.width - 2 * dimensions.line.margin]),
                         'y1' : d3.scale.linear()
                             .range([dimensions.line.height - 2 * dimensions.line.margin, 0]),
@@ -842,7 +843,7 @@ function build_line_chart(data){
         .append("text")
         .attr("class", "label")
         .attr("x", (dimensions.line.width - 2 * dimensions.line.margin)/2)
-        .attr("y", -6)
+        .attr("y", 48)
         .attr('fill', 'black')
         .style("text-anchor", "middle")
         .text("Time");
@@ -899,26 +900,25 @@ function fill_line_chart(data){
     };
 
     var yield_count = d3.nest()
-        .key(function(d) {return d.datetime.getUTCFullYear();})
+        .key(function(d) {return d.datetime.getUTCFullYear().toString();})
         .rollup(agg_yield)
         .entries(data);
 
     var exp_count = d3.nest()
-        .key(function(d) {return d.datetime.getUTCFullYear();})
+        .key(function(d) {return d.datetime.getUTCFullYear().toString();})
         .rollup(agg_exp)
         .entries(data);
-
-    console.log(yield_count)
 
     scales.line.y1.domain([0, d3.max(exp_count, function(d){return d.values;})]);
     scales.line.y2.domain([0, d3.max(yield_count, function(d){return d.values;})]);
 
     var line = d3.svg.line()
-        .x(function(d) {return scales.line.x(d.key); })
+        .x(function(d) {
+            return scales.line.x(yearformat.parse(d.key)); })
         .y(function(d) {return scales.line.y1(d.values); });
 
     var line2 = d3.svg.line()
-        .x(function(d) {return scales.line.x(d.key); })
+        .x(function(d) {return scales.line.x(yearformat.parse(d.key)); })
         .y(function(d) {return scales.line.y2(d.values); });
 
     var chart = d3.select("#line_chart")
