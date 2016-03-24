@@ -13,6 +13,7 @@ var yearformat = d3.time.format("%Y");
 var mindate = format.parse("1/1/1944 0:00:00 AM"),
     maxdate = format.parse("1/1/2000 0:00:00 AM");
 
+
 //dimensions
 var dimensions = {'map' : {'margin' : 20,
                             'width' : 1180,
@@ -1093,6 +1094,30 @@ function update_filters(data){
         .on("click", apply_filters);
 }
 
+//Animation
+
+function animate(data){
+
+    function start_animation(){
+        var dates = [];
+        data.forEach(function(d){
+            dates.push(d.datetime)
+            });
+        var minday = d3.min(dates);
+        var maxday = d3.max(dates);
+
+        var days = d3.time.day.utc.range(minday, maxday);
+
+        for (var i = 0; i <= days.length; i++){
+            console.log(days[i])
+        }
+    }
+
+    d3.select('div#anim_button_div')
+        .select('input.block')
+        .on("click", start_animation)
+}
+
 // DRAW VISUALIZATION
 
 function draw(){
@@ -1122,6 +1147,7 @@ function draw(){
             total_yield(d);
             build_line_chart(d);
             fill_line_chart(d);
+            animate(d);
         });
 
 }

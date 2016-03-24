@@ -111,6 +111,10 @@
         </div>
     </div>
 
+    <div id = "anim_button_div" class = "row padded">
+        <input type = "button" name = "anim_button" value = "Run Animation" class="block">
+    </div>
+
     <div id = "graphics" class = "row white-bg" style="overflow : auto;">
         <div id = "barchart_container" class = "row">
             <div id = "bar_test_count" class = "row"></div>
