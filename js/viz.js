@@ -14,19 +14,19 @@ var mindate = format.parse("1/1/1944 0:00:00 AM"),
 
 //dimensions
 var dimensions = {'map' : {'margin' : 20,
-                            'width' : 1200,
+                            'width' : 1180,
                             'height' : 700},
                 'scatter' : {'margin' : 60,
-                            'width' : 1200,
+                            'width' : 1180,
                             'height' : 500},
                 'bar_exp' : {'margin' : 30,
-                            'width' : 1200,
+                            'width' : 1180,
                             'height' : 100}};
 
 //define map projection
 var projection = d3.geo.mercator()
     .scale(185)
-    .translate([(dimensions.map.width - dimensions.map.margin) / 2.05,
+    .translate([(dimensions.map.width - dimensions.map.margin) / 1.975,
         (dimensions.map.height - dimensions.map.margin) / 1.6]);
 
 
@@ -41,15 +41,22 @@ var scales = {'scatter' : {'x' : d3.time.scale.utc()
             'bar_yield' : {'x' : d3.scale.linear()
                                 .range([0, dimensions.bar_exp.width - 2 * dimensions.bar_exp.margin])}};
 
+
 //define colors for each country
-var cc = {'Russia' : 'DarkRed',
-          'China' : 'OrangeRed',
-          'USA' : 'MidnightBlue',
-          'England' : 'Teal',
-          'France' : 'Cyan',
-          'India' : 'Green',
-          'Pakistan' : 'Lime',
-          'Unknown' : 'Black'};
+var cc = [{'country' : 'Russia', 'color' : 'DarkRed', 'id' : 0},
+    {'country' : 'China', 'color' :  'OrangeRed', 'id' : 1},
+    {'country' : 'USA', 'color' :  'MidnightBlue', 'id' : 2},
+    {'country' : 'England', 'color' :  'Teal', 'id' : 3},
+    {'country' : 'France', 'color' :  'Cyan', 'id' : 4},
+    {'country' : 'India', 'color' :  'Green', 'id' : 5},
+    {'country' : 'Pakistan', 'color' : 'Lime', 'id' : 6},
+    {'country' : 'Unknown', 'color' :  'Black', 'id' : 7}];
+
+var cc_map = d3.map(cc, function(d){return d.country});
+
+var return_color = function(country){
+    return cc_map.get(country).color;
+};
 
 var circle_range = [5, 20];
 
@@ -189,7 +196,7 @@ var selectCoord = function(coord) {
             return circle_range[1];
         })
         .attr('fill', function(d) {
-            return cc[d.Country];
+            return return_color(d.Country);
         })
         .attr("opacity", 0.7);
 };
@@ -201,7 +208,7 @@ var deselectCoord = function(coord, data) {
         })
         .attr('fill', 'rgba(0, 0, 0, 0)')
         .attr('stroke', function(d) {
-            return cc[d.Country];
+            return return_color(d.Country);
         })
         .attr('stroke-width', 1.5)
         .attr('opacity', 0.7)
@@ -333,6 +340,7 @@ function map_draw(geo_data) {
     //create svg
     var svg_map = d3.select("#map")
         .append("svg")
+        .attr('class', 'map_svg')
         .attr("width", dimensions.map.width)
         .attr("height", dimensions.map.height)
         .append('g')
@@ -347,10 +355,11 @@ function map_draw(geo_data) {
         .attr('d', path)
         .style('fill', update_countries);
 
+
     //set colors of countries on map
     function update_countries(d) {
-        if(cc.hasOwnProperty(d.properties.name)) {
-            return cc[d.properties.name];
+        if(cc_map.has(d.properties.name)) {
+            return return_color(d.properties.name);
         } else {
             return "lightGrey";
         }
@@ -387,7 +396,7 @@ function plot_points(data) {
             })
             .attr('fill', 'rgba(0, 0, 0, 0)')
             .attr('stroke', function(d) {
-                return cc[d.Country];
+                return return_color(d.Country);
             })
             .attr('stroke-width', 1.5)
             .attr('opacity', 0.7)
@@ -504,11 +513,11 @@ function fill_timeline(data) {
             return scales.scatter.y(d.max_yield);
         })
         .attr("fill", function (d) {
-            return cc[d.Country];
+            return return_color(d.Country);
         })
         .attr("opacity", 0.3)
         .attr('stroke', function (d) {
-            return cc[d.Country];
+            return return_color(d.Country);
         })
         .attr('stroke-width', 1.5)
         .attr('stroke-opacity', 0.7)
@@ -582,6 +591,7 @@ function total_exp(data){
     var te_nested = d3.nest()
                         .key(function(d) {return d.Country;})
                         .rollup(agg_exp)
+                        .sortKeys(function(a, b) {return cc_map.get(a).id - cc_map.get(b).id;})
                         .entries(data);
 
     var stack_data = function(data){
@@ -634,7 +644,7 @@ function total_exp(data){
         })
         .attr("height", dimensions.bar_exp.height - 2 * dimensions.bar_exp.margin)
         .attr("fill", function (d) {
-            return cc[d.key];
+            return return_color(d.key);
         })
         .attr('opacity', 0.7);
 }
@@ -684,6 +694,7 @@ function total_yield(data){
     var te_nested = d3.nest()
         .key(function(d) {return d.Country;})
         .rollup(agg_yield)
+        .sortKeys(function(a, b) {return cc_map.get(a).id - cc_map.get(b).id;})
         .entries(data);
 
     var stack_data = function(data){
@@ -736,7 +747,7 @@ function total_yield(data){
         })
         .attr("height", dimensions.bar_exp.height - 2 * dimensions.bar_exp.margin)
         .attr("fill", function (d) {
-            return cc[d.key];
+            return return_color(d.key);
         })
         .attr('opacity', 0.7);
 }
@@ -747,11 +758,12 @@ function country_filter(data){
     //create legend
     // Nest the entries by symbol
     var dataNest = d3.nest()
-        .key(function(d) {return d.Country;})
-        .entries(data);
+        .key(function(d) {return d.id;})
+        .sortKeys(d3.ascending)
+        .entries(cc);
 
     var margin = {top: 30, right: 20, bottom: 30, left: 50},
-        width = 1200 - margin.left - margin.right,
+        width = 1180 - margin.left - margin.right,
         height = 140 - margin.top - margin.bottom;
 
     var legendSpace = width/dataNest.length;
@@ -768,10 +780,10 @@ function country_filter(data){
             .attr("cy", 30)
             .attr('r', 20)
             .attr('opacity', 0.9)
-            .attr('id', function(){return d.key;})
+            .attr('id', function(){return d.values[0].country;})
             .classed('active', true)
             .style("fill", function() {
-                return cc[d.key]; })
+                return d.values[0].color})
             .on('click', function(){
                 var active   = d3.select(this).classed('active') ? false : true,
                     newOpacity = active ? 0.9 : 0.5;
@@ -788,7 +800,7 @@ function country_filter(data){
             .attr("x", (legendSpace/2)+i*legendSpace)
             .attr("y", 75)
             .attr("class", "legend")
-            .text(d.key);
+            .text(d.values[0].country);
 
     });
 
