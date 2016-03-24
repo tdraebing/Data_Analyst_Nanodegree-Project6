@@ -116,6 +116,7 @@
             <div id = "bar_test_count" class = "row"></div>
             <div id = "bar_yield" class = "row"></div>
         </div>
+        <div id = "line_chart" class="row"></div>
         <div id = "map" class = "row"></div>
         <div id = "timescatter" class = "row"></div>
         <div id = "country_legend" class = "row"></div>

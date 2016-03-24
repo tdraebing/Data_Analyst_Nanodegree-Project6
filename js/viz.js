@@ -19,6 +19,9 @@ var dimensions = {'map' : {'margin' : 20,
                 'scatter' : {'margin' : 60,
                             'width' : 1180,
                             'height' : 500},
+                'line' : {'margin' : 90,
+                        'width' : 1180,
+                        'height' : 500},
                 'bar_exp' : {'margin' : 30,
                             'width' : 1180,
                             'height' : 100}};
@@ -36,6 +39,13 @@ var scales = {'scatter' : {'x' : d3.time.scale.utc()
                             'y' : d3.scale.log()
                               .domain([Math.pow(10, -5), Math.pow(10, 6)])
                               .range([dimensions.scatter.height - 2 * dimensions.scatter.margin, 0])},
+            'line' : {'x' : d3.scale.linear()
+                                        .domain([1945, 1998])
+                                        .range([0, dimensions.line.width - 2 * dimensions.line.margin]),
+                        'y1' : d3.scale.linear()
+                            .range([dimensions.line.height - 2 * dimensions.line.margin, 0]),
+                        'y2' : d3.scale.linear()
+                            .range([dimensions.line.height - 2 * dimensions.line.margin, 0])},
             'bar_exp' : {'x' : d3.scale.linear()
                                 .range([0, dimensions.bar_exp.width - 2 * dimensions.bar_exp.margin])},
             'bar_yield' : {'x' : d3.scale.linear()
@@ -448,6 +458,7 @@ function timeline(data){
         .attr("class", "label")
         .attr("x", dimensions.scatter.width - 2 * dimensions.scatter.margin)
         .attr("y", -6)
+        .attr('fill', 'black')
         .style("text-anchor", "end")
         .text("Time");
 
@@ -463,6 +474,7 @@ function timeline(data){
         .attr("transform", "rotate(-90)")
         .attr("dy", ".71em")
         .attr("y", 6)
+        .attr('fill', 'black')
         .style("text-anchor", "end")
         .text("Maximum Reported Yield [kt]");
 
@@ -806,6 +818,146 @@ function country_filter(data){
 
 }
 
+// LINE CHART
+
+function build_line_chart(data){
+    //Adding svg + plot
+    var tl_svg = d3.select("#line_chart")
+        .append("svg")
+        .attr("width", dimensions.line.width)
+        .attr("height", dimensions.line.height)
+        .append("g")
+        .attr("class", "line")
+        .attr("transform", "translate(" + dimensions.line.margin + "," + dimensions.line.margin + ")");
+
+    //defining and adding axes
+    var xAxis = d3.svg.axis()
+        .scale(scales.line.x)
+        .orient("bottom");
+
+    tl_svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + (dimensions.line.height - 2 * dimensions.line.margin) + ")")
+        .call(xAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", (dimensions.line.width - 2 * dimensions.line.margin)/2)
+        .attr("y", -6)
+        .attr('fill', 'black')
+        .style("text-anchor", "middle")
+        .text("Time");
+
+    var yAxis1 = d3.svg.axis()
+        .scale(scales.line.y1)
+        .orient("left");
+
+    tl_svg.append("g")
+        .attr("class", "y1 axis")
+        .call(yAxis1)
+        .style("stroke", "blue")
+        .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("dy", ".71em")
+        .attr("y", 6)
+        .attr('fill', 'blue')
+        .style("text-anchor", "end")
+        .text("Explosion Count");
+
+    var yAxis2 = d3.svg.axis()
+        .scale(scales.line.y2)
+        .orient("right");
+
+    tl_svg.append("g")
+        .attr("class", "y2 axis")
+        .attr("transform", "translate(" + (dimensions.line.width - 2 * dimensions.line.margin) + ",0)")
+        .style("stroke", "red")
+        .call(yAxis2)
+        .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("dy", ".71em")
+        .attr("y", -24)
+        .attr('fill', 'red')
+        .style("text-anchor", "end")
+        .text("Yield [kt]");
+}
+
+function fill_line_chart(data){
+    var agg_exp = function(leaves){
+        return d3.sum(leaves, function() {
+            return 1;
+        });
+
+    };
+
+    var agg_yield = function(leaves){
+        return d3.sum(leaves, function(d) {
+            return d.max_yield;
+        });
+
+    };
+
+    var yield_count = d3.nest()
+        .key(function(d) {return d.datetime.getUTCFullYear();})
+        .rollup(agg_yield)
+        .entries(data);
+
+    var exp_count = d3.nest()
+        .key(function(d) {return d.datetime.getUTCFullYear();})
+        .rollup(agg_exp)
+        .entries(data);
+
+    console.log(yield_count)
+
+    scales.line.y1.domain([0, d3.max(exp_count, function(d){return d.values;})]);
+    scales.line.y2.domain([0, d3.max(yield_count, function(d){return d.values;})]);
+
+    var line = d3.svg.line()
+        .x(function(d) {return scales.line.x(d.key); })
+        .y(function(d) {return scales.line.y1(d.values); });
+
+    var line2 = d3.svg.line()
+        .x(function(d) {return scales.line.x(d.key); })
+        .y(function(d) {return scales.line.y2(d.values); });
+
+    var chart = d3.select("#line_chart")
+                    .select('svg')
+                    .select('g.line')
+                    .append('g')
+                    .attr('class', 'splines');
+
+    var exp_path = chart.append("path")
+                        .datum(exp_count)
+                        .attr("class", "line_exp")
+                        .attr("d", line);
+
+    var yield_path = chart.append("path")
+                            .datum(yield_count)
+                            .attr("class", "line_yield")
+                            .attr("d", line2);
+
+    var yAxis1 = d3.svg.axis()
+        .scale(scales.line.y1)
+        .orient("left");
+
+    var yAxis2 = d3.svg.axis()
+        .scale(scales.line.y2)
+        .orient("right");
+
+    d3.select('#line_chart')
+        .select("svg")
+        .selectAll(".y1")
+        .call(yAxis1);
+
+    d3.select('#line_chart')
+        .select("svg")
+        .selectAll(".y2")
+        .call(yAxis2);
+
+
+}
+
 // COUNTRY SELECTION BUTTONS
 
 function deselect_Countries(data){
@@ -968,6 +1120,8 @@ function draw(){
             total_exp(d);
             build_bar_yield(d);
             total_yield(d);
+            build_line_chart(d);
+            fill_line_chart(d);
         });
 
 }
