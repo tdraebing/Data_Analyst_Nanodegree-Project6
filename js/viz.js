@@ -121,7 +121,7 @@
      */
     
     var getRadius = function(d, data){
-        var extent = d3.extent(data, function(d){return d['maxYield'];});
+        var extent = d3.extent(data, function(d){return d['max_yield'];});
         var radius = d3.scale.linear()
                              .domain(extent)
                              .range(circleRange);
@@ -145,7 +145,7 @@
     var getSelectedCountries = function(){
             var selectedCountries = [];
     
-            d3.select('div#country_legend')
+            d3.select('div#legendCountries')
                 .selectAll('circle.active')
                 .each( function(){
                     selectedCountries.push( d3.select(this).attr("id") );
@@ -161,10 +161,10 @@
     var loadData = function(d)  {
             var new_d = {};
     
-            if (+d['maxYield'] == 0){
-                new_d['maxYield']  = 0.0001;
+            if (+d['max_yield'] == 0){
+                new_d['max_yield']  = 0.0001;
             } else {
-                new_d['maxYield']  = +d['maxYield'];
+                new_d['max_yield']  = +d['max_yield'];
             }
             new_d['index']          = +d[''];
             new_d['mb']             = +d['mb'];
@@ -191,7 +191,7 @@
 
     var aggregatedYield = function(leaves){
         return d3.sum(leaves, function(d) {
-            return d.maxYield;
+            return d.max_yield;
         });
     };
     
@@ -202,9 +202,7 @@
     /*
     Brush for filtering through scatter plot
      */
-    
-    var brush = d3.svg.brush();
-    
+
     var brushStart = function() {
             d3.select('brush').call(brush.clear());
         };
@@ -222,8 +220,9 @@
                   });
             }
         };
-    
-    
+
+    var brush = d3.svg.brush();
+
     /*
     Tooltip and data point hovering
      */
@@ -269,7 +268,7 @@
                     + "Longitude: {0}<br/>".format(d.longitude)
                     + "Latitude: {0}<br/>".format(d.latitude)
                     + "Testing Country: {0}<br/>".format(d.Country)
-                    + "Maximum Yield: {0}<br/>".format(showNA(d.maxYield))
+                    + "Maximum Yield: {0}<br/>".format(showNA(d.max_yield))
                     + "Explosion Medium: {0}<br/>".format(d.medium)
                     + "Confirmation: {0}<br/>".format(d.confirmation)
                     + "Data Source: {0}<br/>".format(d.source);
@@ -290,7 +289,7 @@
     
     var deselectPoints = function(points, data) {
             d3.selectAll(points)
-                .attr("r", function(d){return getRadius(d['maxYield'], data);})
+                .attr("r", function(d){return getRadius(d['max_yield'], data);})
                 .attr("opacity", 0.3)
                 .attr("stroke", "none");
         };
@@ -309,7 +308,7 @@
     var deselectCoord = function(coord, data) {
             d3.select(coord)
                 .attr('r', function(d) {
-                    return getRadius(d['maxYield'],data);
+                    return getRadius(d['max_yield'],data);
                 })
                 .attr('fill', 'rgba(0, 0, 0, 0)')
                 .attr('stroke', function(d) {
@@ -580,16 +579,12 @@
                                            .style("text-anchor", "end")
                                            .text("Maximum Reported Yield [kt]");
 
-            //Adding brush for data selection
             brush.x(scales.scatter.x)
                  .y(scales.scatter.y)
-
-
-            debugger;
-            brush.on("brushStart", brushStart)
+                 .on("brushstart", brushStart)
                  .on("brush", function(){updatePlots(data);})
-                 .on("brushEnd", brushEnd);
-    
+                 .on("brushend", brushEnd);
+
             var brushTimeline = svgTimeline.append("g")
                                            .attr("class", "brush")
                                            .call(brush)
@@ -626,13 +621,13 @@
 
     var buildFilterForm = function(data){
         //create button for selecting all
-            d3.select('div#buttonSelectAll')
-              .append('input')
-              .attr('type', 'button')
-              .attr("name", "selectAll")
-              .attr("value", "Select all Countries")
-              .attr("class", "block")
-              .on("click", function(){selectAllCountries(data);});
+        d3.select('div#buttonSelectAll')
+          .append('input')
+          .attr('type', 'button')
+          .attr("name", "selectAll")
+          .attr("value", "Select all Countries")
+          .attr("class", "block")
+          .on("click", function(){selectAllCountries(data);});
         
         //create button for deselecting all
         d3.select('div#buttonDeselectAll')
@@ -755,7 +750,7 @@
     Fill yield bar
      */
 
-    var totalYield = function(data){        
+    var fillBarYield = function(data){
             var nestedYield = d3.nest()
                                 .key(function(d) {return d.Country;})
                                 .rollup(aggregatedYield)
@@ -777,13 +772,13 @@
                     return ar;
                 };
     
-            var total = d3.sum(nestedYield, function(d){return d.values;});
+            var totalYield = d3.sum(nestedYield, function(d){return d.values;});
         
             var svgBarYield = d3.select('#barYield')
                                 .select(".svgBarYield");
             
             //update axis
-            scales.barYield.x.domain([0, total]);
+            scales.barYield.x.domain([0, totalYield]);
     
             var xAxis = d3.svg.axis()
                               .scale(scales.barYield.x)
@@ -825,23 +820,23 @@
 
     var fillAccumulatedTimeline = function(data){
             //aggregate data
-            var aggregatedCount = d3.nest()
-                                    .key(function(d) {return d.datetime.getUTCFullYear().toString();})
-                                    .rollup(aggregatedCount)
-                                    .entries(data);
+            var nestedCount = d3.nest()
+                                .key(function(d) {return d.datetime.getUTCFullYear().toString();})
+                                .rollup(aggregatedCount)
+                                .entries(data);
         
-            var aggregatedYield = d3.nest()
-                                    .key(function(d) {return d.datetime.getUTCFullYear().toString();})
-                                    .rollup(aggregatedYield)
-                                    .entries(data);
+            var nestedYield = d3.nest()
+                                .key(function(d) {return d.datetime.getUTCFullYear().toString();})
+                                .rollup(aggregatedYield)
+                                .entries(data);
 
             var accumulatedTimeline = d3.select("#accumulatedTimeline")
                                         .select('svg')
                                         .select('g.line');
             
             //set y-axis domains according to aggregated data and add them to the chart
-            scales.line.y1.domain([0, d3.max(aggregatedCount, function(d){return d.values;})]);
-            scales.line.y2.domain([0, d3.max(aggregatedYield, function(d){return d.values;})]);
+            scales.line.y1.domain([0, d3.max(nestedCount, function(d){return d.values;})]);
+            scales.line.y2.domain([0, d3.max(nestedYield, function(d){return d.values;})]);
 
             var yAxisCount = d3.svg.axis()
                                    .scale(scales.line.y1)
@@ -867,12 +862,12 @@
                                   .y(function(d) {return scales.line.y2(d.values); });
     
             var pathCount = accumulatedTimeline.append("path")
-                                               .datum(aggregatedCount)
+                                               .datum(nestedCount)
                                                .attr("class", "lineCount")
                                                .attr("d", lineCount);
     
             var pathYield = accumulatedTimeline.append("path")
-                                               .datum(aggregatedYield)
+                                               .datum(nestedYield)
                                                .attr("class", "lineYield")
                                                .attr("d", lineYield);
 
@@ -894,7 +889,7 @@
                                 return d.index;
                             })
                             .attr('r', function(d) {
-                                return getRadius(d['maxYield'], data);
+                                return getRadius(d['max_yield'], data);
                             });
 
             //entering new circles
@@ -907,7 +902,7 @@
                         return d.coords[1];
                    })
                    .attr('r', function(d) {
-                        return getRadius(d['maxYield'], data);
+                        return getRadius(d['max_yield'], data);
                    })
                    .attr('fill', 'rgba(0, 0, 0, 0)')
                    .attr('stroke', function(d) {
@@ -958,13 +953,13 @@
                    .append("circle")
                    .classed('greyed', false)
                    .attr('r', function (d) {
-                        return getRadius(d['maxYield'], data);
+                        return getRadius(d['max_yield'], data);
                    })
                    .attr("cx", function (d) {
                         return scales.scatter.x(d.datetime);
                    })
                    .attr("cy", function (d) {
-                        return scales.scatter.y(d.maxYield);
+                        return scales.scatter.y(d.max_yield);
                    })
                    .attr("fill", function (d) {
                         return getColor(d.Country);
@@ -1022,7 +1017,7 @@
             
             //dates
             $( "#datePickerMin" ).datepicker( "setDate", brush_ext[0][0]);
-            $( "#datePickerMax" ).datepicker( "setDate", brush_ext[1][0] );
+            $( "#datePickerMax" ).datepicker( "setDate", brush_ext[1][0]);
         
             //yield
             d3.select('input#miny')
@@ -1042,8 +1037,8 @@
                   .classed("greyed", function(d) {
                                             return d.datetime <= brush_ext[0][0] 
                                                 || d.datetime >= brush_ext[1][0]
-                                                || d.maxYield <= brush_ext[0][1] 
-                                                || d.maxYield >= brush_ext[1][1];
+                                                || d.max_yield <= brush_ext[0][1]
+                                                || d.max_yield >= brush_ext[1][1];
                                         });
             } else{
                 d3.select("#timeline")
@@ -1074,19 +1069,18 @@
                 filteredComplete = filteredCountry.filter(function(d) {
                                                                 return d.datetime >= brush_ext[0][0]
                                                                     && d.datetime <= brush_ext[1][0]
-                                                                    && d.maxYield >= brush_ext[0][1]
-                                                                    && d.maxYield <= brush_ext[1][1];
+                                                                    && d.max_yield >= brush_ext[0][1]
+                                                                    && d.max_yield <= brush_ext[1][1];
                                                             });
             }
 
             /*
             Apply filters
              */
-        
             fillTimeline(filteredCountry);
             fillMap(filteredComplete);
             fillBarCount(filteredComplete);
-            totalYield(filteredComplete);
+            fillBarYield(filteredComplete);
         };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1226,7 +1220,7 @@
                 .select("svgMap")
                 .selectAll("circle")
                 .attr('r', function(d) {
-                    return getRadius(d['maxYield'], data);
+                    return getRadius(d['max_yield'], data);
                 });
         
             d3.select("#timeline")
@@ -1234,7 +1228,7 @@
                 .select('g.scatter')
                 .selectAll("circle")
                 .attr('r', function(d) {
-                    return getRadius(d['maxYield'], data);
+                    return getRadius(d['max_yield'], data);
                 });
         };
 
@@ -1280,28 +1274,28 @@
             return loadData(d);
         },
         function (d) {
+            //Draw control elements
+            drawCountryLegend();
+            buildFilterForm(d);
+
+            //Implement controls
+            filterCountries(d);
+
             //Draw viz frameworks
             drawBarCount();
             drawBarYield();
             drawAccumulatedTimeline();
             drawTimeline(d);
             
-            //Draw control elements
-            drawCountryLegend();
-            buildFilterForm(d);
-            
+            //Implement animation
+            buildAnimationInterface(d);
+
             //Fill Plots
             fillBarCount(d);
-            totalYield(d);
+            fillBarYield(d);
             fillAccumulatedTimeline(d);
             fillMap(d);
             fillTimeline(d);
-            
-            //Implement controls
-            filterCountries(d);
-            
-            //Implement animation
-            buildAnimationInterface(d);
         });
 
 })();

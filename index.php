@@ -147,13 +147,13 @@
 
                         <p class="centered"><b>Date Range</b></p>
 
-                        <div id = "minDate" class = "five twelfth">
+                        <div id = "containerMinDate" class = "five twelfth">
                             <input type="text" id="datePickerMin" value="01/01/1944">
                         </div>
 
                         <div class="one twelfth align-center"><b>-</b></div>
 
-                        <div id = "maxDate" class = "five twelfth">
+                        <div id = "containerMaxDate" class = "five twelfth">
                             <input type="text" id="datePickerMax" value="01/01/1999">
                         </div>
 
@@ -164,7 +164,7 @@
                         <p class="centered"><b>Yield Range</b></p>
 
                         <div id = "minYield" class = "two fifth">
-                            <input id="minYield" type="text" placeholder="0"  value="0">
+                            <input id="minYield" type="text" placeholder="0.0001"  value="0.0001">
                         </div>
 
                         <div class="one fifth align-center"><b>-</b></div>
@@ -232,21 +232,25 @@
         <script src="./js/viz.js"></script>
 
         <script>
+            var fullDateFormat  = d3.time.format("%m/%d/%Y %I:%M:%S %p")
+            var minDatePicker = fullDateFormat.parse("1/1/1944 0:00:00 AM"),
+                maxDatePicker = fullDateFormat.parse("1/1/2000 0:00:00 AM");
+
             $( "#datePickerMin" ).datepicker({
                 changeYear: true,
                 changeMonth: true,
                 yearRange: "1944:1999",
-                minDate: minDate,
-                maxDate: maxDate,
-                defaultDate: minDate
+                minDate: minDatePicker,
+                maxDate: maxDatePicker,
+                defaultDate: minDatePicker
             });
             $( "#datePickerMax" ).datepicker({
                 changeYear: true,
                 changeMonth: true,
                 yearRange: "1944:1999",
-                minDate: minDate,
-                maxDate: maxDate,
-                defaultDate: maxDate
+                minDate: minDatePicker,
+                maxDate: maxDatePicker,
+                defaultDate: maxDatePicker
             });
         </script>
 

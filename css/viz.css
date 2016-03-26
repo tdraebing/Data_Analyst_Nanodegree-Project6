@@ -11,19 +11,19 @@
     font-size: 20px;
 }
 
-.line_exp {
+.lineCount {
      fill: none;
      stroke: blue;
      stroke-width: 3px;
  }
 
-.line_yield {
+.lineYield {
     fill: none;
     stroke: red;
     stroke-width: 3px;
 }
 
-.map_path {
+.pathMap {
     opacity: 0.4;
     stroke: black;
     stroke-width: 1;
@@ -60,7 +60,7 @@ circle.greyed {
     stroke: lightgrey;
 }
 
-#country_legend {
+#legendCountries {
     font-size: 16px;
     font-weight: bold;
     text-anchor: middle;
