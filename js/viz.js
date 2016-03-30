@@ -1405,11 +1405,7 @@
             //buildAnimationInterface(d);
 
             //Fill Plots
-            fillBarCount(d);
-            fillBarYield(d);
-            fillAccumulatedTimeline(d);
-            fillMap(d);
-            fillTimeline(d);
+            updatePlots(d)
         });
 
 })();
