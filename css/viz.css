@@ -13,13 +13,13 @@
 
 .lineCount {
      fill: none;
-     stroke: blue;
+     stroke: dimgrey;
      stroke-width: 3px;
  }
 
 .lineYield {
     fill: none;
-    stroke: red;
+    stroke: darkred;
     stroke-width: 3px;
 }
 

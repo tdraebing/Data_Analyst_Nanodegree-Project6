@@ -109,19 +109,33 @@
                     </div>
                 </div>
             </div>
-
+<!--
             <div id = "containerAnimation" class = "row padded">
                 <input type = "button" name = "anim_button" value = "Run Animation" class="block buttonAnimation">
             </div>
-
+-->
             <div id = "containerGraphics" class = "row white-bg" style="overflow : auto;">
                 <div id = "containerBars" class = "row">
                     <div id = "barCount" class = "row"></div>
                     <div id = "barYield" class = "row"></div>
                 </div>
-                <div id = "accumulatedTimeline" class="row"></div>
+                <div class = "row asphalt-bg half-padded"></div>
+                <div id = "accumulatedTimelineContainer" class="row">
+                    <div id = "accumulatedTimelineButtons" class="row">
+                        <div class="skip-six one eighth half-padded">
+                            <input type = "button" name = "buttonAggregation" class="block buttonAggregation">
+                        </div>
+                        <div class="one eighth half-padded">
+                            <input type = "button" name = "buttonScale" class="block buttonScale">
+                        </div>
+                    </div>
+                    <div id = "accumulatedTimeline" class="row"></div>
+                </div>
+                <div class = "row asphalt-bg half-padded"></div>
                 <div id = "map" class = "row"></div>
+                <div class = "row asphalt-bg half-padded"></div>
                 <div id = "timeline" class = "row"></div>
+                <div class = "row asphalt-bg half-padded"></div>
                 <div id = "legendCountries" class = "row"></div>
             </div>
 

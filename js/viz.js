@@ -11,8 +11,7 @@
      Date formating
      */
     
-    var fullDateFormat  = d3.time.format("%m/%d/%Y %I:%M:%S %p"),
-        yearFormat      = d3.time.format("%Y");
+    var fullDateFormat  = d3.time.format("%m/%d/%Y %I:%M:%S %p");
     
     
     
@@ -50,7 +49,7 @@
                       'scatter' :   {'margin' : 60,
                                      'width'  : 1180,
                                      'height' : 500},
-                      'line'    :   {'margin' : 90,
+                      'timeBar' :   {'margin' : 90,
                                      'width'  : 1180,
                                      'height' : 500},
                       'bars'    :   {'margin' : 30,
@@ -74,7 +73,12 @@
     
     var circleRange = [5, 20];
     
-    
+    /*
+    Default values for aggregated timeline
+     */
+
+    var AccumulatedTimelineAggregation = 'Count',
+        AccumulatedTimelineScale = 'Relative';
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // CALCULATED VIZ OPTIONS
@@ -92,6 +96,9 @@
     /*
      Scales for all plots
      */
+
+    var yearSeries = [];
+    for (var i = 1945; i != 1999; ++i) yearSeries.push(i);
     
     var scales = {'scatter' :   {'x' : d3.time.scale.utc()
                                          .domain([minDate, maxDate])
@@ -99,13 +106,11 @@
                                  'y' : d3.scale.log()
                                          .domain([Math.pow(10, -5), Math.pow(10, 6)])
                                          .range([dimensions.scatter.height - 2 * dimensions.scatter.margin, 0])},
-                  'line'    :   {'x' : d3.time.scale.utc()
-                                         .domain([minDate, maxDate])
-                                         .range([0, dimensions.line.width - 2 * dimensions.line.margin]),
-                                 'y1' : d3.scale.linear()
-                                          .range([dimensions.line.height - 2 * dimensions.line.margin, 0]),
-                                 'y2' : d3.scale.linear()
-                                         .range([dimensions.line.height - 2 * dimensions.line.margin, 0])},
+                  'timeBar' :   {'x' : d3.scale.ordinal()
+                                               .domain(yearSeries)
+                                               .rangeRoundBands([0, dimensions.timeBar.width - 2 * dimensions.timeBar.margin], .1),
+                                 'y' : d3.scale.linear()
+                                          .range([dimensions.timeBar.height - 2 * dimensions.timeBar.margin, 0])},
                   'barCount' :  {'x' : d3.scale.linear()
                                          .range([0, dimensions.bars.width - 2 * dimensions.bars.margin])},
                   'barYield' :  {'x' : d3.scale.linear()
@@ -433,64 +438,48 @@
             var svgAccumulatedTimeline = d3.select("#accumulatedTimeline")
                                            .append("svg")
                                            .attr('class', 'svgAccumulatedTimeline')
-                                           .attr("width", dimensions.line.width)
-                                           .attr("height", dimensions.line.height)
+                                           .attr("width", dimensions.timeBar.width)
+                                           .attr("height", dimensions.timeBar.height)
                                            .append("g")
-                                           .attr("class", "line")
-                                           .attr("transform", "translate(" + dimensions.line.margin + ","
-                                                                           + dimensions.line.margin + ")");
-    
+                                           .attr("class", "accumulatedTimeline")
+                                           .attr("transform", "translate(" + dimensions.timeBar.margin + ","
+                                                                           + dimensions.timeBar.margin + ")");
+
+        var yearSeries = [];
+        for (var i = 1945; i <= 1998; i = i + 4) yearSeries.push(i);
             var xAxis = d3.svg.axis()
-                              .scale(scales.line.x)
-                              .orient("bottom");
+                              .scale(scales.timeBar.x)
+                              .orient("bottom")
+                              .tickValues(yearSeries);
     
             var xAxisLine = svgAccumulatedTimeline.append("g")
                                                   .attr("class", "x axis")
                                                   .attr("transform",
-                                                        "translate(0," + (dimensions.line.height - 2 * dimensions.line.margin) + ")")
+                                                        "translate(0," + (dimensions.timeBar.height - 2 * dimensions.timeBar.margin) + ")")
                                                   .call(xAxis)
                                                   .append("text")
                                                   .attr("class", "label")
-                                                  .attr("x", (dimensions.line.width - 2 * dimensions.line.margin)/2)
+                                                  .attr("x", (dimensions.timeBar.width - 2 * dimensions.timeBar.margin)/2)
                                                   .attr("y", 48)
                                                   .attr('fill', 'black')
                                                   .style("text-anchor", "middle")
                                                   .text("Time");
-    
-            var yAxisCount = d3.svg.axis()
-                                   .scale(scales.line.y1)
+        
+            var yAxis = d3.svg.axis()
+                                   .scale(scales.timeBar.y)
                                    .orient("left");
     
-            var yAxisCountLine = svgAccumulatedTimeline.append("g")
-                                                       .attr("class", "y1 axis")
-                                                       .call(yAxisCount)
-                                                       .style("stroke", "blue")
-                                                       .append("text")
-                                                       .attr("class", "label")
-                                                       .attr("transform", "rotate(-90)")
-                                                       .attr("dy", ".71em")
-                                                       .attr("y", 6)
-                                                       .attr('fill', 'blue')
-                                                       .style("text-anchor", "end")
-                                                       .text("Explosion Count");
-    
-            var yAxisYield = d3.svg.axis()
-                                   .scale(scales.line.y2)
-                                   .orient("right");
-    
-            var yAxisYieldLine = svgAccumulatedTimeline.append("g")
-                                                       .attr("class", "y2 axis")
-                                                       .attr("transform", "translate(" + (dimensions.line.width - 2 * dimensions.line.margin) + ",0)")
-                                                       .style("stroke", "red")
-                                                       .call(yAxisYield)
-                                                       .append("text")
-                                                       .attr("class", "label")
-                                                       .attr("transform", "rotate(-90)")
-                                                       .attr("dy", ".71em")
-                                                       .attr("y", -24)
-                                                       .attr('fill', 'red')
-                                                       .style("text-anchor", "end")
-                                                       .text("Yield [kt]");
+            var yAxisLine =  svgAccumulatedTimeline.append("g")
+                                                   .attr("class", "y2 axis")
+                                                   .call(yAxis)
+                                                   .append("text")
+                                                   .style("stroke", "darkRed")
+                                                   .attr("class", "label")
+                                                   .attr("transform", "rotate(-90)")
+                                                   .attr("dy", ".71em")
+                                                   .attr("y", -24)
+                                                   .attr('fill', 'darkRed')
+                                                   .style("text-anchor", "end");
         };
     
     /*
@@ -600,7 +589,42 @@
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // CONTROL ELEMENTS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
+    /*
+    Initiate Accumulated Timeline buttons
+     */
+
+    var buildAccumulatedTimeline = function(data){
+        var buttonAggregation = d3.select('#accumulatedTimelineButtons')
+                                  .select('.buttonAggregation');
+
+        buttonAggregation.classed(AccumulatedTimelineAggregation, true)
+                         .attr('value', AccumulatedTimelineAggregation);
+
+        buttonAggregation.on('click', function(){
+                                 buttonAggregation.classed(AccumulatedTimelineAggregation, false)
+                                 AccumulatedTimelineAggregation = AccumulatedTimelineAggregation === 'Count' ? 'Yield' : 'Count';
+                                 buttonAggregation.classed(AccumulatedTimelineAggregation, true)
+                                                  .attr('value', AccumulatedTimelineAggregation);
+                                 fillAccumulatedTimeline(data);
+                         });
+
+        var buttonScale = d3.select('#accumulatedTimelineButtons')
+                            .select('.buttonScale');
+
+        buttonScale.classed(AccumulatedTimelineScale, true)
+                   .attr('value', AccumulatedTimelineScale);
+
+        buttonScale.on('click', function(){
+                                buttonScale.classed(AccumulatedTimelineScale, false)
+                                AccumulatedTimelineScale = AccumulatedTimelineScale === 'Relative' ? 'Absolute' : 'Relative';
+                                buttonScale.classed(AccumulatedTimelineScale, true)
+                                    .attr('value', AccumulatedTimelineScale);
+                                fillAccumulatedTimeline(data);
+                        });
+    };
+
+
     /*
     Draw country legend and filter interface
      */
@@ -819,59 +843,136 @@
      */
 
     var fillAccumulatedTimeline = function(data){
+            //retrieve current options
+            var buttonAggregation = d3.select('#accumulatedTimelineButtons')
+                .select('.buttonAggregation');
+
+            var buttonScale = d3.select('#accumulatedTimelineButtons')
+                .select('.buttonScale');
+
+            var optionAggregation = buttonAggregation.classed('Count') ? 'Count' : 'Yield',
+                optionScale = buttonScale.classed('Relative') ? 'Relative' : 'Absolute';
+
             //aggregate data
-            var nestedCount = d3.nest()
-                                .key(function(d) {return d.datetime.getUTCFullYear().toString();})
-                                .rollup(aggregatedCount)
-                                .entries(data);
-        
-            var nestedYield = d3.nest()
-                                .key(function(d) {return d.datetime.getUTCFullYear().toString();})
-                                .rollup(aggregatedYield)
-                                .entries(data);
+            var nestedData;
+
+            if (optionAggregation === 'Count'){
+                nestedData = d3.nest()
+                               .key(function(d) {return d.datetime.getUTCFullYear().toString();})
+                               .key(function(d) {return d.Country;})
+                               .sortKeys(function(a, b) {return countryColorsMap.get(a).id - countryColorsMap.get(b).id;})
+                               .rollup(aggregatedCount)
+                               .entries(data);
+            }else{
+                nestedData = d3.nest()
+                               .key(function(d) {return d.datetime.getUTCFullYear().toString();})
+                    .key(function(d) {return d.Country;})
+                               .rollup(aggregatedYield)
+                               .entries(data);
+            }
+            var relativeScale = d3.scale.linear()
+                .range([0,1]);
+
+
+            var stackedData= (function(data){
+                                var ar = [];
+                                var y0;
+                                var total;
+                                for (var year in data){
+                                    if (data.hasOwnProperty(year)){
+                                        var arYear = {'key' : +data[year].key, 'values' : []};
+                                        y0 = 0;
+                                        if (optionScale === 'Relative') {
+                                            total = d3.sum(data[year].values, function (d) {
+                                                return d.values;
+                                            });
+                                        }
+                                        for (var country in data[year].values){
+
+                                            if (data[year].values.hasOwnProperty(country)) {
+                                                var arCountry = {'key' : data[year].values[country].key, 'values' : null};
+                                                var ydiff = data[year].values[country].values;
+                                                if (optionScale === 'Relative'){
+                                                    relativeScale.domain([0, total]);
+                                                    ydiff = relativeScale(ydiff)
+                                                }
+                                                arCountry.values = {
+                                                    'year' : +data[year].key,
+                                                    'y0': y0,
+                                                    'y1': y0 + ydiff,
+                                                    'value': ydiff
+                                                };
+                                                y0 = y0 + ydiff;
+                                            }
+                                            arYear.values.push(arCountry);
+                                        }
+                                        ar.push(arYear);
+                                    }
+
+                                }
+                                return ar;
+                            })(nestedData);
 
             var accumulatedTimeline = d3.select("#accumulatedTimeline")
                                         .select('svg')
-                                        .select('g.line');
-            
+                                        .select('g.accumulatedTimeline');
+
+
             //set y-axis domains according to aggregated data and add them to the chart
-            scales.line.y1.domain([0, d3.max(nestedCount, function(d){return d.values;})]);
-            scales.line.y2.domain([0, d3.max(nestedYield, function(d){return d.values;})]);
+            if (optionScale === 'Relative') {
+                scales.timeBar.y.domain([0, 1]);
+            } else{
+                scales.timeBar.y.domain([0, d3.max(stackedData, function (d) {
+                    return d3.sum(d.values, function (d) {
+                        return d.values.value;
+                    });
+                })]);
+            }
 
-            var yAxisCount = d3.svg.axis()
-                                   .scale(scales.line.y1)
-                                   .orient("left");
-    
-            var yAxisYield = d3.svg.axis()
-                                   .scale(scales.line.y2)
-                                   .orient("right");
+            var yAxis = d3.svg.axis()
+                           .scale(scales.timeBar.y)
+                           .orient("left");
 
-            var yAxisCountTimeline = accumulatedTimeline.selectAll(".y1")
-                                                        .call(yAxisCount);
+            var yAxisTimeline = accumulatedTimeline.selectAll(".y1")
+                                                   .call(yAxis);
 
-            var yAxisYieldTimeline = accumulatedTimeline.selectAll(".y2")
-                                                        .call(yAxisYield);
-        
-            //define and add data lines
-            var lineCount = d3.svg.line()
-                                  .x(function(d) {return scales.line.x(yearFormat.parse(d.key)); })
-                                  .y(function(d) {return scales.line.y1(d.values); });
-    
-            var lineYield = d3.svg.line()
-                                  .x(function(d) {return scales.line.x(yearFormat.parse(d.key)); })
-                                  .y(function(d) {return scales.line.y2(d.values); });
-    
-            var pathCount = accumulatedTimeline.append("path")
-                                               .datum(nestedCount)
-                                               .attr("class", "lineCount")
-                                               .attr("d", lineCount);
-    
-            var pathYield = accumulatedTimeline.append("path")
-                                               .datum(nestedYield)
-                                               .attr("class", "lineYield")
-                                               .attr("d", lineYield);
+            accumulatedTimeline.selectAll('.layer').remove();
+
+            var year = accumulatedTimeline.selectAll('.layer')
+                                            .data(stackedData)
+                                            .enter()
+                                            .append("g")
+                                            .attr("class", "layer");
+
+
+            var rect = year.selectAll("rect")
+                            .data(function(d){
+                                return d.values;});
+
+            rect.enter()
+                .append("rect")
+                .attr("x", function(d){
+                    return scales.timeBar.x(d.values.year);
+                })
+                .attr('y', function(d) {
+                    return scales.timeBar.y(d.values.y1);
+                })
+                .attr("width", function() {
+                    return scales.timeBar.x.rangeBand()-1;
+                })
+                .attr("height", function(d){
+                    return scales.timeBar.y(d.values.y0)-scales.timeBar.y(d.values.y1);
+                })
+                .attr('opacity', 0.7)
+                .attr('value', function(d){return d.values.value})
+                .attr("fill", function (d) {
+                    return getColor(d.key);
+                });
+
 
         };
+
+
     
     /*
     Fill map
@@ -1235,12 +1336,16 @@
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // IMPLEMENT ANIMATION
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
-    
+    /*
     var buildAnimationInterface = function(data){
             d3.select('div#containerAnimation')
               .select('input.buttonAnimation')
               .on("click", function(){startAnimation(data);})
         };
+
+    var updateAnimation = function(date, data){
+        
+    };
     
     var startAnimation = function(data){
             var dates = [];
@@ -1252,12 +1357,12 @@
     
             var days = d3.time.day.utc.range(minDay, maxDay);
     
-            for (var i = 0; i <= days.length; i++){
-                console.log(days[i])
+            for (var i = 0; i < days.length; i++){
+                updateAnimation(days[i], data);
             }
         };
 
-
+*/
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // EXECUTE
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1275,6 +1380,7 @@
         },
         function (d) {
             //Draw control elements
+            buildAccumulatedTimeline(d);
             drawCountryLegend();
             buildFilterForm(d);
 
@@ -1288,7 +1394,7 @@
             drawTimeline(d);
             
             //Implement animation
-            buildAnimationInterface(d);
+            //buildAnimationInterface(d);
 
             //Fill Plots
             fillBarCount(d);
