@@ -605,7 +605,7 @@
                                  AccumulatedTimelineAggregation = AccumulatedTimelineAggregation === 'Count' ? 'Yield' : 'Count';
                                  buttonAggregation.classed(AccumulatedTimelineAggregation, true)
                                                   .attr('value', AccumulatedTimelineAggregation);
-                                 fillAccumulatedTimeline(data);
+                                 updatePlots(data);
                          });
 
         var buttonScale = d3.select('#accumulatedTimelineButtons')
@@ -619,7 +619,7 @@
                                 AccumulatedTimelineScale = AccumulatedTimelineScale === 'Relative' ? 'Absolute' : 'Relative';
                                 buttonScale.classed(AccumulatedTimelineScale, true)
                                     .attr('value', AccumulatedTimelineScale);
-                                fillAccumulatedTimeline(data);
+                                updatePlots(data);
                         });
     };
 
@@ -865,7 +865,8 @@
             }else{
                 nestedData = d3.nest()
                                .key(function(d) {return d.datetime.getUTCFullYear().toString();})
-                    .key(function(d) {return d.Country;})
+                                .key(function(d) {return d.Country;})
+                                .sortKeys(function(a, b) {return countryColorsMap.get(a).id - countryColorsMap.get(b).id;})
                                .rollup(aggregatedYield)
                                .entries(data);
             }

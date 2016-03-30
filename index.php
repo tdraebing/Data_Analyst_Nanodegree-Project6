@@ -40,6 +40,7 @@
                         <li role="tab" aria-controls="#tabFeedback">Feedback</li>
                         <li role="tab" aria-controls="#tabResources">Resources</li>
                         <li role="tab" aria-controls="#tabStory">Notable observations</li>
+                        <li role="tab" aria-controls="#tabImpressum">Impressum</li>
                     </ul>
                     <div id="tabSummary" role="tabpanel">
                         <h2>Summary</h2>
@@ -121,7 +122,7 @@
                         <p><b>Map: </b><a href = "https://www.udacity.com/course/viewer#!/c-ud507-nd">Udacity's Data Visualization and d3.js</a></p>
                         <p></br></p>
                         <h3>Software and Frameworks</h3>
-                        <p><b>IDE: </b><a href = "https://www.jetbrains.com/phpstorm/">PhpStorm 10.0.3 by JetBrains (Educational License)</a></p>
+                        <p><b>IDE: </b><a href = "https://www.jetbrains.com/phpstorm/">PhpStorm 2016.1 by JetBrains (Educational License)</a></p>
                         <p><b>PHP Interpreter: </b><a href = "https://sourceforge.net/projects/xampp/">XAMPP</a></p>
                         <p><b>D3.js: </b><a href = "http://d3js.org">d3js.org</a></p>
                         <p><b>Datepicker: </b><a href = "http://api.jqueryui.com/datepicker/">jQuery UI</a></p>
@@ -130,7 +131,7 @@
                         <p><b>CSV Generation: </b><a href = "https://products.office.com/de-de/excel">Microsoft Excel 2016</a></p>
                         <p><b>Data Preprocessing: </b><a href = "https://www.r-project.org/">R 3.2.3</a></p>
                         <p><b>Data Preprocessing (IDE): </b><a href = "https://www.rstudio.com/">RStudio 0.99.489</a></p>
-                        <p><b>Web Hosting: </b><a href = "https://www.000webhost.com/">000webhost</a></p>
+                        <p><b>Web Hosting: </b><a href = "https://www.hosting24.com/">hosting24</a></p>
                         <p></br></p>
                         <h3>Help Sources</h3>
                         <p><b>HTML/CSS: </b><a href = "http://www.w3schools.com/w3css/default.asp">W3Schools</a></p>
@@ -140,10 +141,19 @@
                         <p><b>Brush Selection: </b><a href = "http://bl.ocks.org/mbostock/4349545">Mike Bostock</a></p>
                         <p><b>Brush Control: </b><a href = "http://bl.ocks.org/timelyportfolio/5c136de85de1c2abb6fc">Timely Portfolio</a></p>
                         <p><b>Interactive Legend: </b><a href = "http://bl.ocks.org/d3noob/5d621a60e2d1d02086bf">D3Noob</a></p>
+                        <p><b>Stacked Plot: </b><a href = "https://bl.ocks.org/mbostock/3886208">Mike Bostock</a></p>
                         <p><b>Misc: </b><a href = "http://stackoverflow.com">A lot of Stackoverflow</a></p>
 
                     </div>
                     <div id="tabStory" role="tabpanel">
+                        The data shows some interesting events in the history of the cold war. For example the Bilateral testing ban
+                        between 1958 and 1961, marked by no nuclear weapon explosions initiated by the USA or USSR. The explosion of the biggest
+                        nuclear weapon tested: the Zar Bomb in 1961. Also that from the sixties on there seem to be standardized
+                        bomb sizes that were tested.
+                    </div>
+                    <div id="tabImpressum" role="tabpanel">
+                        <p>This visualization was created by Thomas Dräbing.</p>
+                        <p>If you liked it, please visit my <a href="https://de.linkedin.com/in/thomasdraebing">LinkedIn</a> profile.</p>
 
                     </div>
                 </div>
