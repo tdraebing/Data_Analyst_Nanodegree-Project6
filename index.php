@@ -42,38 +42,77 @@
                         <li role="tab" aria-controls="#tabStory">Notable observations</li>
                     </ul>
                     <div id="tabSummary" role="tabpanel">
+                        <h2>Summary</h2>
                         This visualization shows all nuclear weapon explosions from 1945 to 1998. Astonishingly there were
-                        more than 2000 explosions. The huge scale of nuclear weapon tests is mostly unknown, but nevertheless
+                        more than 2000 explosions. The huge scale of nuclear weapon tests is unknown to most people, but nevertheless
                         has health and environment effects until today. Having awareness about these events might be
                         important to prevent further tests on this scale. This prompted Isao Hashimoto to make an amazing <a
                             href ="http://www.ctbto.org/specials/1945-1998-by-isa­o-hashimoto/" target="_blank"> video </a>.
-                        This visualization aims to present the data in a more interactive form.
+                        This visualization aims to present the data in a more interactive form. So have fun exploring the data
+                        of nuclear weapon testing.
                     </div>
                     <div id="tabDesign" role="tabpanel">
-                        <p>The visualization contains a world map and a scatter plot. The data of the nuclear explosions are
-                            represented by different Encodings. The color represents the country, which initiated the explosion.
-                            The size of the circle/ring represents the maximum yield of the bomb in a linear scale. The location
-                            on the map is also the site of the explosion. The scatter plot additionally gives the time of
-                            explosion and the maximum yield on a log-scale.</p>
-                        <p>The visualization is interactive. Doing a mouse over over a point will highlight the data point on
-                            the map and the scatter plot as well as open a tool tip giving some more information. The data can
-                            also be filtered in several ways. Clicking on the respective circles in the legend allows to select
-                            or deselect data of countries. For convenience there are also buttons to select all or none at once.
-                            The data can further be filtered by dragging a box in the scatter plot to filter for maximum yield
-                            and time.</p>
+                        <h2>Design</h2>
+                        <p>The visualization consists of several parts: <br>
+                            <ul>
+                                <li>Single-Bar Charts</li>
+                                <li>Stacked Bar Chart</li>
+                                <li>Map</li>
+                                <li>Scatter Plot</li>
+                            </ul>
+                        </p>
+                        <p><h3><b>Colors</b></h3>
+                        The color of the data representations always represents the nation that initiated the explosion.
+                        the colors were chosen to represent the different factions during the cold war. A legend
+                        can be found under the visualization.
+                        </p>
+                        <p><h3><b>Single-Bar Charts</b></h3>
+                        Single bars representing the amount of nuclear weapon explosions or accumulated yield of the selected
+                        data points. The data is ordered to group nations of the same factions. The plot reacts on the filtering
+                        possibilities described below and allows to summarize the data selection.
+                        </p>
+                        <p><h3><b>Stacked Bar Chart</b></h3>
+                        The stacked bar chart shows the distribution of nuclear weapon explosion count or yield for every year per
+                        nation. The user can choose between an absolute or relative scale and whether to show the count or the yield
+                        by pressing the buttons in the upper right corner.
+                        </p>
+                        <p><h3><b>Map</b></h3>
+                        The countries who performed nuclear weapon tests are marked with their respective color. The borders
+                        actually represent their modern course. Thus the UDSSR is represented by Russia. The plotted circles
+                        represent the single nuclear weapon explosion. The size of the circles encodes the yield of the bomb
+                        in a linear scale.
+                        </p>
+                        <p><h3><b>Scatter Plot</b></h3>
+                        In the scatter plot the single nuclear weapon explosions are plotted over time against yield. The yield
+                        is additionally encoded by circle size in the same fashion as on the map. The y-Axis was scaled logarithmic
+                        to allow for an overall better distribution of the data points. The yield of data points containing an
+                        unknown yield or a yield of 0 was substituted with 0.0001, which is lower than all other data points,
+                        to be able to calculate the logarithm.
+                        </p>
+                        <p><h3><b>Interactivity</b></h3>
+                        The visualization is highly interactive. In the control form under the visualization the scale of the
+                        circle sizes can be adjusted by changing the maximum and minimum sizes. Additionally data points can be
+                        filtered by time and yield using the respective form elements or by selecting the data points in the
+                        scatter plot by drawing a frame around them. The countries can be deselected and selected by clicking
+                        on the respective circles in the legend. For convenience buttons to select or deselect all data points
+                        were added.
+                        Hovering over data points on the map or scatter plot opens a tooltip with additional information and
+                        highlights the data point in both the scatter plot and map.
+                        </p>
+
                     </div>
                     <div id="tabFeedback" role="tabpanel">
                         <p><b>Planned Features</b></p>
                         <ul class = "list">
-                            <li>Improved responsiveness of visualization</li>
-                            <li>Interactive adjustment of circle radii</li>
+                            <li>Improved responsiveness of visualization (work around implemented by adding scroll bar to div)</li>
+                            <li><del>Interactive adjustment of circle radii</del></li>
                             <li>Better scaling of circle radii</li>
                             <li>Improved data representation on map</li>
                             <li>Color Blind Mode (optional different shapes)</li>
                             <li>Zoomable scatter plot</li>
-                            <li>Animated time lapse</li>
+                            <li>Animated time lapse (work in progress)</li>
                             <li>Interactive data table with link to map and plot</li>
-                            <li>Adding additional plots. E.g. Medium</li>
+                            <li><del>Adding additional plots. E.g. Medium</del></li>
                         </ul>
                     </div>
                     <div id="tabResources" role="tabpanel">
@@ -114,6 +153,7 @@
                 <input type = "button" name = "anim_button" value = "Run Animation" class="block buttonAnimation">
             </div>
 -->
+            <div class = "row asphalt-bg half-padded"></div>
             <div id = "containerGraphics" class = "row white-bg" style="overflow : auto;">
                 <div id = "containerBars" class = "row">
                     <div id = "barCount" class = "row"></div>

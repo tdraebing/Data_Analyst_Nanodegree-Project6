@@ -98,7 +98,7 @@
      */
 
     var yearSeries = [];
-    for (var i = 1945; i != 1999; ++i) yearSeries.push(i);
+    for (var i = 1944; i != 1999; ++i) yearSeries.push(i);
     
     var scales = {'scatter' :   {'x' : d3.time.scale.utc()
                                          .domain([minDate, maxDate])
@@ -470,15 +470,14 @@
                                    .orient("left");
     
             var yAxisLine =  svgAccumulatedTimeline.append("g")
-                                                   .attr("class", "y2 axis")
+                                                   .attr("class", "y axis")
                                                    .call(yAxis)
                                                    .append("text")
-                                                   .style("stroke", "darkRed")
                                                    .attr("class", "label")
                                                    .attr("transform", "rotate(-90)")
                                                    .attr("dy", ".71em")
-                                                   .attr("y", -24)
-                                                   .attr('fill', 'darkRed')
+                                                   .attr("y", 6)
+                                                   .attr('fill', 'black')
                                                    .style("text-anchor", "end");
         };
     
@@ -969,7 +968,14 @@
                     return getColor(d.key);
                 });
 
+            var yAxis = d3.svg.axis()
+                            .scale(scales.timeBar.y)
+                            .orient("left");
 
+            var yAxisLine =  accumulatedTimeline.select(".y")
+                                                .call(yAxis)
+                .select('.label')
+                .text(optionScale + ' ' + optionAggregation)
         };
 
 
@@ -1178,6 +1184,7 @@
             /*
             Apply filters
              */
+            fillAccumulatedTimeline(filteredCountry);
             fillTimeline(filteredCountry);
             fillMap(filteredComplete);
             fillBarCount(filteredComplete);
