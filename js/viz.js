@@ -1117,6 +1117,13 @@
             }
         
             var brush_ext = brush.extent();
+
+            //deal with the case that the brush was not used yet
+
+            if (brush_ext[1][0] == minDate || brush_ext[0][1] > 100000){
+                brush_ext = [[minDate, 0.00001],[maxDate, 55000]];
+            }
+
             var selectedCountries = getSelectedCountries();
             
             /*
@@ -1128,9 +1135,9 @@
             $( "#datePickerMax" ).datepicker( "setDate", brush_ext[1][0]);
         
             //yield
-            d3.select('input#miny')
+            d3.select('input#minYield')
               .attr('value', brush_ext[0][1]);
-            d3.select('input#maxy')
+            d3.select('input#maxYield')
               .attr('value', brush_ext[1][1]);
         
             /*

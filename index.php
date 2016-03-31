@@ -228,7 +228,7 @@
                         <p class="centered"><b>Yield Range</b></p>
 
                         <div id = "minYield" class = "two fifth">
-                            <input id="minYield" type="text" placeholder="0.0001"  value="0.0001">
+                            <input id="minYield" type="text" placeholder="0.0001"  value="0.00001">
                         </div>
 
                         <div class="one fifth align-center"><b>-</b></div>
@@ -296,9 +296,9 @@
         <script src="./js/viz.js"></script>
 
         <script>
-            var fullDateFormat  = d3.time.format("%m/%d/%Y %I:%M:%S %p")
+            var fullDateFormat  = d3.time.format("%m/%d/%Y %I:%M:%S %p");
             var minDatePicker = fullDateFormat.parse("1/1/1944 0:00:00 AM"),
-                maxDatePicker = fullDateFormat.parse("1/1/2000 0:00:00 AM");
+                maxDatePicker = fullDateFormat.parse("1/1/1999 0:00:00 AM");
 
             $( "#datePickerMin" ).datepicker({
                 changeYear: true,
