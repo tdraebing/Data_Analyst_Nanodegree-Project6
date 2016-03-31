@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Visualization</title>
+
+    <!-- Modernizr -->
+    <script src="../js/libs/modernizr-2.6.2.min.js"></script>
+    <!-- framework css -->
+    <!--[if gt IE 9]><!-->
+    <link type="text/css" rel="stylesheet" href="../css/groundwork.css">
+    <!--<![endif]-->
+    <!--[if lte IE 9]>
+    <link type="text/css" rel="stylesheet" href="../css/groundwork-core.css">
+    <link type="text/css" rel="stylesheet" href="../css/groundwork-type.css">
+    <link type="text/css" rel="stylesheet" href="../css/groundwork-ui.css">
+    <link type="text/css" rel="stylesheet" href="../css/groundwork-anim.css">
+    <link type="text/css" rel="stylesheet" href="../css/groundwork-ie.css">
+    <![endif]-->
+
+
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+
+    <link href="../css/jquery-ui.css" rel="stylesheet">
+    <script src="../js/libs/jquery.js"></script>
+    <script src="../js/libs/jquery-ui.js"></script>
+
+    <link rel="stylesheet" href="../css/viz.css">
+</head>
+<body>
+<div class = 'container asphalt justify'>
+    <div id = 'stacked' class = 'row asphalt-bg'>
+        <div id = 'sidebarStacked' class = 'one fourth'>
+            test
+        </div>
+        <div id = "visualizationStacked" class = "three fourth white-bg">
+            <div id = "barCount" class = "row"></div>
+            <div id = "barYield" class = "row"></div>
+        </div>
+    </div>
+
+
+    <div id = "containerGraphics" class = "three fourth" style="overflow : auto;">
+
+
+        <div class = "row asphalt-bg half-padded"></div>
+
+        <div id = "accumulatedTimelineContainer" class="row">
+            <div id = "accumulatedTimelineButtons" class="row">
+
+                <div class="skip-six one eighth half-padded">
+                    <input type = "button" name = "buttonAggregation" class="block buttonAggregation">
+                </div>
+
+                <div class="one eighth half-padded">
+                    <input type = "button" name = "buttonScale" class="block buttonScale">
+                </div>
+
+            </div>
+
+            <div id = "accumulatedTimeline" class="row"></div>
+
+        </div>
+
+        <div class = "row asphalt-bg half-padded"></div>
+        <div id = "map" class = "row"></div>
+        <div class = "row asphalt-bg half-padded"></div>
+        <div id = "timeline" class = "row"></div>
+        <div class = "row asphalt-bg half-padded"></div>
+        <div id = "legendCountries" class = "row"></div>
+        <div class = "row">
+            <div id="containerCircleSizes" class = "two twelfth padded">
+
+                <p class="centered"><b>Circle Size</b></p>
+
+                <div id = "divMinCircleSize" class = "three eighth">
+                    <input id="minCircleSize" type="text" placeholder="5" value="5">
+                </div>
+
+                <div class="two eighth align-center"><b>-</b></div>
+
+                <div id = "divMaxCircleSize" class = "three eighth">
+                    <input id="maxCircleSize" type="text" placeholder="20" value="20">
+                </div>
+
+            </div>
+
+            <div id = "containerDateFilter" class = "skip-one six twelfth padded">
+
+                <p class="centered"><b>Date Range</b></p>
+
+                <div id = "containerMinDate" class = "five twelfth">
+                    <input type="text" id="datePickerMin" value="01/01/1944">
+                </div>
+
+                <div class="one twelfth align-center"><b>-</b></div>
+
+                <div id = "containerMaxDate" class = "five twelfth">
+                    <input type="text" id="datePickerMax" value="01/01/1999">
+                </div>
+
+            </div>
+
+            <div id = "containerYieldFilter" class = "skip-one two twelfth padded">
+
+                <p class="centered"><b>Yield Range</b></p>
+
+                <div id = "divMinYield" class = "two fifth">
+                    <input id="minYield" type="text" placeholder="0.0001"  value="0.00001">
+                </div>
+
+                <div class="one fifth align-center"><b>-</b></div>
+
+                <div id = "divMaxYield" class = "two fifth">
+                    <input id="maxYield" type="text" placeholder="50000" value="50000">
+                </div>
+
+            </div>
+        </div>
+
+        <div id="containerUpdateButton" class="row">
+            <div id="buttonUpdateFilter" class="skip-one one third"></div>
+        </div>
+
+        <div id = "containerButtons" class = "row gapped padded">
+            <div id = "containerCountryButtons" class = "six twelfth">
+                <div id = "buttonDeselectAll" class = "skip-two four twelfth"></div>
+                <div id = "buttonSelectAll" class = "four twelfth"></div>
+            </div>
+            <div id = "buttonRemoveSelection" class = "two twelfth"></div>
+            <div id = "buttonRemoveFilters" class = "skip-one two twelfth"></div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<script src="../js/viz.js"></script>
+
+<script>
+    var fullDateFormat  = d3.time.format("%m/%d/%Y %I:%M:%S %p");
+    var minDatePicker = fullDateFormat.parse("1/1/1944 0:00:00 AM"),
+        maxDatePicker = fullDateFormat.parse("1/1/1999 0:00:00 AM");
+
+    $( "#datePickerMin" ).datepicker({
+        changeYear: true,
+        changeMonth: true,
+        yearRange: "1944:1999",
+        minDate: minDatePicker,
+        maxDate: maxDatePicker,
+        defaultDate: minDatePicker
+    });
+    $( "#datePickerMax" ).datepicker({
+        changeYear: true,
+        changeMonth: true,
+        yearRange: "1944:1999",
+        minDate: minDatePicker,
+        maxDate: maxDatePicker,
+        defaultDate: maxDatePicker
+    });
+</script>
+
+<script type="text/javascript" src="../js/groundwork.all.js"></script>
+</body>
+</html>

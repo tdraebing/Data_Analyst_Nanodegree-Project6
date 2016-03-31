@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Design</title>
+
+    <!-- Modernizr -->
+    <script src="../js/libs/modernizr-2.6.2.min.js"></script>
+    <!-- framework css -->
+    <!--[if gt IE 9]><!-->
+    <link type="text/css" rel="stylesheet" href="../css/groundwork.css">
+    <!--<![endif]-->
+    <!--[if lte IE 9]>
+    <link type="text/css" rel="stylesheet" href="../css/groundwork-core.css">
+    <link type="text/css" rel="stylesheet" href="../css/groundwork-type.css">
+    <link type="text/css" rel="stylesheet" href="../css/groundwork-ui.css">
+    <link type="text/css" rel="stylesheet" href="../css/groundwork-anim.css">
+    <link type="text/css" rel="stylesheet" href="../css/groundwork-ie.css">
+    <![endif]-->
+    <script src="../js/libs/jquery.js"></script>
+</head>
+<body>
+    <div class = 'container asphalt justify'>
+        <h2>Design</h2>
+        <p>The visualization consists of several parts: <br>
+        <ul>
+            <li>Single-Bar Charts</li>
+            <li>Stacked Bar Chart</li>
+            <li>Map</li>
+            <li>Scatter Plot</li>
+        </ul>
+        </p>
+        <p><h3><b>Colors</b></h3>
+        The color of the data representations always represents the nation that initiated the explosion.
+        the colors were chosen to represent the different factions during the cold war. A legend
+        can be found under the visualization.
+        </p>
+        <p><h3><b>Single-Bar Charts</b></h3>
+        Single bars representing the amount of nuclear weapon explosions or accumulated yield of the selected
+        data points. The data is ordered to group nations of the same factions. The plot reacts on the filtering
+        possibilities described below and allows to summarize the data selection.
+        </p>
+        <p><h3><b>Stacked Bar Chart</b></h3>
+        The stacked bar chart shows the distribution of nuclear weapon explosion count or yield for every year per
+        nation. The user can choose between an absolute or relative scale and whether to show the count or the yield
+        by pressing the buttons in the upper right corner.
+        </p>
+        <p><h3><b>Map</b></h3>
+        The countries who performed nuclear weapon tests are marked with their respective color. The borders
+        actually represent their modern course. Thus the UDSSR is represented by Russia. The plotted circles
+        represent the single nuclear weapon explosion. The size of the circles encodes the yield of the bomb
+        in a linear scale.
+        </p>
+        <p><h3><b>Scatter Plot</b></h3>
+        In the scatter plot the single nuclear weapon explosions are plotted over time against yield. The yield
+        is additionally encoded by circle size in the same fashion as on the map. The y-Axis was scaled logarithmic
+        to allow for an overall better distribution of the data points. The yield of data points containing an
+        unknown yield or a yield of 0 was substituted with 0.0001, which is lower than all other data points,
+        to be able to calculate the logarithm.
+        </p>
+        <p><h3><b>Interactivity</b></h3>
+        The visualization is highly interactive. In the control form under the visualization the scale of the
+        circle sizes can be adjusted by changing the maximum and minimum sizes. Additionally data points can be
+        filtered by time and yield using the respective form elements or by selecting the data points in the
+        scatter plot by drawing a frame around them. The countries can be deselected and selected by clicking
+        on the respective circles in the legend. For convenience buttons to select or deselect all data points
+        were added.
+        Hovering over data points on the map or scatter plot opens a tooltip with additional information and
+        highlights the data point in both the scatter plot and map.
+        </p>
+    </div>
+
+
+<script type="text/javascript" src="../js/groundwork.all.js"></script>
+</body>
+</html>

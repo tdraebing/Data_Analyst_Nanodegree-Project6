@@ -3,12 +3,12 @@
     stroke: #000;
     shape-rendering: crispEdges;
     stroke-width: 1.5;
-    font-size: 16px;
+    font-size: 12px;
 }
 
 .label {
     font-weight: bold;
-    font-size: 20px;
+    font-size: 12px;
 }
 
 .lineCount {
@@ -61,7 +61,7 @@ circle.greyed {
 }
 
 #legendCountries {
-    font-size: 16px;
+    font-size: 12px;
     font-weight: bold;
     text-anchor: middle;
 }

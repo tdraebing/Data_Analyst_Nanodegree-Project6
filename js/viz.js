@@ -44,19 +44,19 @@
      */
     
     var dimensions = {'map'     :   {'margin' : 20,
-                                     'width'  : 1180,
+                                     'width'  : 1100,
                                      'height' : 700},
                       'scatter' :   {'margin' : 60,
-                                     'width'  : 1180,
+                                     'width'  : 1100,
                                      'height' : 500},
                       'timeBar' :   {'margin' : 90,
                                      'width'  : 1180,
                                      'height' : 500},
                       'bars'    :   {'margin' : 30,
-                                     'width'  : 1180,
+                                     'width'  : 600,
                                      'height' : 100},
                       'legend'  :   {'margin' : 20,
-                                     'width'  : 1180,
+                                     'width'  : 1100,
                                      'height' : 140}};
     
     /*
@@ -420,7 +420,7 @@
             var xAxis = d3.svg.axis()
                               .scale(scales.barYield.x)
                               .orient("bottom")
-                              .ticks(10);
+                              .ticks(10, 's');
     
             var xAxisBar = barYield.append("g")
                                    .attr("class", "x axis")
@@ -806,7 +806,7 @@
             var xAxis = d3.svg.axis()
                               .scale(scales.barYield.x)
                               .orient("bottom")
-                              .ticks(10);
+                              .ticks(10, 's');
     
             var xAxisBarYield = svgBarYield.selectAll(".axis")
                                            .call(xAxis);
@@ -1383,13 +1383,13 @@
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     //draw map
-    d3.json("./data/map/world_countries.json",
+    d3.json("../data/map/world_countries.json",
         function (d){
             drawMap(d)
         });
 
     //create data dependent objects
-    d3.csv("./data/preproc_nuclear_weapon_tests.csv",
+    d3.csv("../data/preproc_nuclear_weapon_tests.csv",
         function (d) {
             return loadData(d);
         },
