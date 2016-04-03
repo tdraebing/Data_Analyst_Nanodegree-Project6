@@ -42,30 +42,47 @@
     /*
     plot dimensions
      */
+
+    var divWidth = $( '#visualizationLegend' ).width();
     
-    var dimensions = {'map'     :   {'margin' : 20,
-                                     'width'  : 1100,
-                                     'height' : 700},
-                      'scatter' :   {'margin' : 60,
-                                     'width'  : 1100,
-                                     'height' : 500},
-                      'timeBar' :   {'margin' : 90,
-                                     'width'  : 1180,
-                                     'height' : 500},
-                      'bars'    :   {'margin' : 30,
-                                     'width'  : 600,
-                                     'height' : 100},
-                      'legend'  :   {'margin' : 20,
-                                     'width'  : 1100,
-                                     'height' : 140}};
-    
+    var dimensions = {'map'     :   {'margin' : {'left' : 20,
+                                                 'right' : 20,
+                                                 'top' : 20,
+                                                 'bottom' : 20},
+                                     'width'  : divWidth,
+                                     'height' : (5/9) * (divWidth >= 800 ? divWidth : 800)},
+                      'scatter' :   {'margin' : {'left' : 50,
+                                                 'right' : 20,
+                                                 'top' : 20,
+                                                 'bottom' : 20},
+                                     'width'  : divWidth,
+                                     'height' : (5/9) * (divWidth >= 800 ? divWidth : 800)},
+                      'timeBar' :   {'margin' : {'left' : 70,
+                                                 'right' : 20,
+                                                 'top' : 20,
+                                                 'bottom' : 20},
+                                     'width'  : divWidth,
+                                     'height' : (5/9) * (divWidth >= 800 ? divWidth : 800)},
+                      'bars'    :   {'margin' : {'left' : 20,
+                                                 'right' : 20,
+                                                 'top' : 20,
+                                                 'bottom' : 20},
+                                     'width'  : divWidth,
+                                     'height' : (1/9) * (divWidth >= 800 ? divWidth : 800)},
+                      'legend'  :   {'margin' : {'left' : 20,
+                                                 'right' : 20,
+                                                 'top' : 20,
+                                                 'bottom' : 20},
+                                     'width'  : divWidth,
+                                     'height' : (1.4/9) * (divWidth >= 800 ? divWidth : 800)}};
+
     /*
     map projection
      */
     
-    var mapScale = {'scale'           : 185,
-                    'translateWidth'  : 1.975,
-                    'translateHeight' : 1.6};
+    var mapScale = {'scale'           : divWidth / 7,
+                    'translateWidth'  : 2,
+                    'translateHeight' : 1.4};
     
     /*
      Circle size
@@ -90,8 +107,8 @@
     
     var projection = d3.geo.mercator()
                            .scale(mapScale.scale)
-                           .translate([(dimensions.map.width - dimensions.map.margin) / mapScale.translateWidth,
-                                       (dimensions.map.height - dimensions.map.margin) / mapScale.translateHeight]);
+                           .translate([(dimensions.map.width - dimensions.map.margin.left) / mapScale.translateWidth,
+                                       (dimensions.map.height - dimensions.map.margin.top) / mapScale.translateHeight]);
     
     /*
      Scales for all plots
@@ -102,19 +119,19 @@
     
     var scales = {'scatter' :   {'x' : d3.time.scale.utc()
                                          .domain([minDate, maxDate])
-                                         .range([0, dimensions.scatter.width - 2 * dimensions.scatter.margin]),
+                                         .range([0, dimensions.scatter.width - dimensions.scatter.margin.right - dimensions.scatter.margin.left]),
                                  'y' : d3.scale.log()
                                          .domain([Math.pow(10, -5), Math.pow(10, 6)])
-                                         .range([dimensions.scatter.height - 2 * dimensions.scatter.margin, 0])},
+                                         .range([dimensions.scatter.height - dimensions.scatter.margin.top - dimensions.scatter.margin.bottom, 0])},
                   'timeBar' :   {'x' : d3.scale.ordinal()
                                                .domain(yearSeries)
-                                               .rangeRoundBands([0, dimensions.timeBar.width - 2 * dimensions.timeBar.margin], .1),
+                                               .rangeRoundBands([0, dimensions.timeBar.width - dimensions.timeBar.margin.left - dimensions.timeBar.margin.right], .1),
                                  'y' : d3.scale.linear()
-                                          .range([dimensions.timeBar.height - 2 * dimensions.timeBar.margin, 0])},
+                                          .range([dimensions.timeBar.height - dimensions.timeBar.margin.top - dimensions.timeBar.margin.bottom, 0])},
                   'barCount' :  {'x' : d3.scale.linear()
-                                         .range([0, dimensions.bars.width - 2 * dimensions.bars.margin])},
+                                         .range([0, dimensions.bars.width - dimensions.bars.margin.left - dimensions.bars.margin.right])},
                   'barYield' :  {'x' : d3.scale.linear()
-                                         .range([0, dimensions.bars.width - 2 * dimensions.bars.margin])}};
+                                         .range([0, dimensions.bars.width - dimensions.bars.margin.left - dimensions.bars.margin.right])}};
 
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -372,8 +389,8 @@
                              .append("g")
                              .attr("class", "barCount")
                              .attr("transform",
-                                   "translate(" + dimensions.bars.margin + ","
-                                                + dimensions.bars.margin + ")");
+                                   "translate(" + dimensions.bars.margin.left + ","
+                                                + dimensions.bars.margin.top + ")");
     
             var title = barCount.append("text")
                                 .attr("class", "label")
@@ -390,7 +407,7 @@
             var xAxisBar = barCount.append("g")
                                    .attr("class", "x axis")
                                    .attr("transform",
-                                         "translate(0," + (dimensions.bars.height - 2 * dimensions.bars.margin) + ")")
+                                         "translate(0," + (dimensions.bars.height - dimensions.bars.margin.top - dimensions.bars.margin.bottom) + ")")
                                    .call(xAxis);
     
         };
@@ -407,8 +424,8 @@
                              .attr("height", dimensions.bars.height)
                              .append("g")
                              .attr("class", "barYield")
-                             .attr("transform", "translate(" + dimensions.bars.margin + ","
-                                                             + dimensions.bars.margin + ")");
+                             .attr("transform", "translate(" + dimensions.bars.margin.left + ","
+                                                             + dimensions.bars.margin.top + ")");
     
             var title = barYield.append("text")
                                 .attr("class", "label")
@@ -426,7 +443,7 @@
                                    .attr("class", "x axis")
                                    .call(xAxis)
                                    .attr("transform",
-                                         "translate(0," + (dimensions.bars.height - 2 * dimensions.bars.margin) + ")")
+                                         "translate(0," + (dimensions.bars.height - dimensions.bars.margin.top - dimensions.bars.margin.bottom) + ")")
     
         };
     
@@ -442,8 +459,8 @@
                                            .attr("height", dimensions.timeBar.height)
                                            .append("g")
                                            .attr("class", "accumulatedTimeline")
-                                           .attr("transform", "translate(" + dimensions.timeBar.margin + ","
-                                                                           + dimensions.timeBar.margin + ")");
+                                           .attr("transform", "translate(" + dimensions.timeBar.margin.left + ","
+                                                                           + dimensions.timeBar.margin.top + ")");
 
         var yearSeries = [];
         for (var i = 1945; i <= 1998; i = i + 4) yearSeries.push(i);
@@ -455,11 +472,11 @@
             var xAxisLine = svgAccumulatedTimeline.append("g")
                                                   .attr("class", "x axis")
                                                   .attr("transform",
-                                                        "translate(0," + (dimensions.timeBar.height - 2 * dimensions.timeBar.margin) + ")")
+                                                        "translate(0," + (dimensions.timeBar.height - dimensions.timeBar.margin.top - dimensions.timeBar.margin.bottom) + ")")
                                                   .call(xAxis)
                                                   .append("text")
                                                   .attr("class", "label")
-                                                  .attr("x", (dimensions.timeBar.width - 2 * dimensions.timeBar.margin)/2)
+                                                  .attr("x", (dimensions.timeBar.width - dimensions.timeBar.margin.left - dimensions.timeBar.margin.right)/2)
                                                   .attr("y", 48)
                                                   .attr('fill', 'black')
                                                   .style("text-anchor", "middle")
@@ -531,8 +548,8 @@
                                 .attr("height", dimensions.scatter.height)
                                 .append("g")
                                 .attr("class", "scatter")
-                                .attr("transform", "translate(" + dimensions.scatter.margin + ","
-                                                                + dimensions.scatter.margin + ")");
+                                .attr("transform", "translate(" + dimensions.scatter.margin.left + ","
+                                                                + dimensions.scatter.margin.top + ")");
     
             var xAxis = d3.svg.axis()
                               .scale(scales.scatter.x)
@@ -541,11 +558,11 @@
             var xAxisTimeline = svgTimeline.append("g")
                                            .attr("class", "x axis")
                                            .attr("transform",
-                                                 "translate(0," + (dimensions.scatter.height - 2 * dimensions.scatter.margin) + ")")
+                                                 "translate(0," + (dimensions.scatter.height - dimensions.scatter.margin.top - dimensions.scatter.margin.bottom) + ")")
                                            .call(xAxis)
                                            .append("text")
                                            .attr("class", "label")
-                                           .attr("x", dimensions.scatter.width - 2 * dimensions.scatter.margin)
+                                           .attr("x", dimensions.scatter.width - dimensions.scatter.margin.left - dimensions.scatter.margin.right)
                                            .attr("y", -6)
                                            .attr('fill', 'black')
                                            .style("text-anchor", "end")
@@ -632,8 +649,8 @@
             var svgLegend = d3.select('div#legendCountries')
                               .append('svg')
                               .attr('class', 'svgLegendCountries')
-                              .attr('width', dimensions.legend.width - 2 * dimensions.legend.margin)
-                              .attr('height', dimensions.legend.height - 2 * dimensions.legend.margin)
+                              .attr('width', dimensions.legend.width - dimensions.legend.margin.left - dimensions.legend.margin.right)
+                              .attr('height', dimensions.legend.height - dimensions.legend.margin.top - dimensions.legend.margin.bottom)
                               .append('g')
                               .attr('class', 'legend');
         };
@@ -692,7 +709,6 @@
           .attr("class", "block")
           .on("click", function(){
               brushControl();
-              changeCircleSizes(data);
           });
     };
 
@@ -762,7 +778,7 @@
                                   .attr("width", function(d) {
                                         return scales.barCount.x(d.value);
                                   })
-                                  .attr("height", dimensions.bars.height - 2 * dimensions.bars.margin)
+                                  .attr("height", dimensions.bars.height - dimensions.bars.margin.top - dimensions.bars.margin.bottom)
                                   .attr("fill", function (d) {
                                         return getColor(d.key);
                                   })
@@ -830,7 +846,7 @@
                                   .attr("width", function(d) {
                                       return scales.barYield.x(d.value);
                                   })
-                                  .attr("height", dimensions.bars.height - 2 * dimensions.bars.margin)
+                                  .attr("height", dimensions.bars.height - dimensions.bars.margin.top - dimensions.bars.margin.bottom)
                                   .attr("fill", function (d) {
                                         return getColor(d.key);
                                   })
@@ -1214,7 +1230,7 @@
                              .sortKeys(d3.ascending)
                              .entries(countryColors);
         
-            var legendSpace = (dimensions.legend.width - 2 * dimensions.legend.margin) / dataLegend.length;
+            var legendSpace = (dimensions.legend.width - dimensions.legend.margin.left - dimensions.legend.margin.right) / dataLegend.length;
     
             var svgLegend = d3.select('div#legendCountries')
                               .select('g.legend');
@@ -1224,7 +1240,7 @@
                 svgLegend.append("circle")
                          .attr("cx", (legendSpace / 2) + i * legendSpace)
                          .attr("cy", 30)
-                         .attr('r', 20)
+                         .attr('r', dimensions.legend.width / 50)
                          .attr('opacity', 0.9)
                          .attr('id', function(){return d.values[0].country;})
                          .classed('active', true)
@@ -1321,32 +1337,7 @@
                           .transition()
                           .delay(1000));
         };
-    
-    /*
-    adjust circle size
-     */
-    
-    var changeCircleSizes = function(data){
-            var minCircleSize = d3.select('input#minCircleSize').node().value;
-            var maxCircleSize = d3.select('input#maxCircleSize').node().value;
-        
-            circleRange = [minCircleSize, maxCircleSize];
-        
-            d3.select("#map")
-                .select("svgMap")
-                .selectAll("circle")
-                .attr('r', function(d) {
-                    return getRadius(d['max_yield'], data);
-                });
-        
-            d3.select("#timeline")
-                .select("svgTimeline")
-                .select('g.scatter')
-                .selectAll("circle")
-                .attr('r', function(d) {
-                    return getRadius(d['max_yield'], data);
-                });
-        };
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // IMPLEMENT ANIMATION
@@ -1412,8 +1403,10 @@
             //buildAnimationInterface(d);
 
             //Fill Plots
-            updatePlots(d)
+            updatePlots(d);
+
         });
 
-})();
+}());
+
 

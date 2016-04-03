@@ -57,7 +57,7 @@
                 <nav role="navigation" class="nav asphalt">
                     <ul>
                         <li>
-                            <a href="./pages/visualization.html" id="default" onClick="changeFrame(this.href); return false;">Visualization</a>
+                            <a href="./pages/visualization.html" id="vizLink" onClick="changeFrame(this.href); return false;">Visualization</a>
                         </li>
                         <li>
                             <a href="./pages/design.html" id="default" onClick="changeFrame(this.href); return false;">Design</a>
@@ -89,6 +89,12 @@
 
             <script type="text/javascript" language="javascript">
                 $('#contentFrame').css('height', $(window).height()+'px');
+
+                $(window).resize(function(){
+                    if (document.getElementById("contentFrame").src.search('visualization.html') != -1){
+                        changeFrame('./pages/visualization.html');
+                    }
+                });
             </script>
 
         <script type="text/javascript" src="./js/groundwork.all.js"></script>

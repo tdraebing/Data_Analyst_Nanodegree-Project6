@@ -31,28 +31,13 @@
 <div class = 'container asphalt justify'>
 
     <div id = 'rowControls' class = 'row asphalt-bg padded'>
-        <div id = 'sidebarSControls' class = 'one fourth padded'>
+        <div id = 'sidebarControls' class = 'one fourth padded'>
             <div class = 'box'></div>
         </div>
         <div id = "visualizationControls" class = "three fourth">
             <div class = "row">
-                <div id="containerCircleSizes" class = "two twelfth padded">
 
-                    <p class="centered"><b>Circle Size</b></p>
-
-                    <div id = "divMinCircleSize" class = "three eighth">
-                        <input id="minCircleSize" type="text" placeholder="5" value="5">
-                    </div>
-
-                    <div class="two eighth align-center"><b>-</b></div>
-
-                    <div id = "divMaxCircleSize" class = "three eighth">
-                        <input id="maxCircleSize" type="text" placeholder="20" value="20">
-                    </div>
-
-                </div>
-
-                <div id = "containerDateFilter" class = "skip-one six twelfth padded">
+                <div id = "containerDateFilter" class = "four twelfth padded">
 
                     <p class="centered"><b>Date Range</b></p>
 
@@ -68,7 +53,7 @@
 
                 </div>
 
-                <div id = "containerYieldFilter" class = "skip-one two twelfth padded">
+                <div id = "containerYieldFilter" class = "skip-one three twelfth padded">
 
                     <p class="centered"><b>Yield Range</b></p>
 
@@ -83,19 +68,16 @@
                     </div>
 
                 </div>
+
+
+                <div id = "containerButtons" class = "skip-one three twelfth">
+                    <div id = "buttonRemoveSelection" class = "row padded"></div>
+                    <div id = "buttonRemoveFilters" class = "row padded"></div>
+                </div>
             </div>
 
             <div id="containerUpdateButton" class="row">
-                <div id="buttonUpdateFilter" class="skip-one one third"></div>
-            </div>
-
-            <div id = "containerButtons" class = "row gapped padded">
-                <div id = "containerCountryButtons" class = "six twelfth">
-                    <div id = "buttonDeselectAll" class = "skip-two four twelfth"></div>
-                    <div id = "buttonSelectAll" class = "four twelfth"></div>
-                </div>
-                <div id = "buttonRemoveSelection" class = "two twelfth"></div>
-                <div id = "buttonRemoveFilters" class = "skip-one two twelfth"></div>
+                <div id="buttonUpdateFilter" class = "eight twelfth"></div>
             </div>
         </div>
     </div>
@@ -105,7 +87,22 @@
             <div class = 'box'></div>
         </div>
         <div id = "visualizationLegend" class = "three fourth white-bg">
-            <div id = "legendCountries" class = "row"></div>
+            <div id = "legendCountries" class = "row padded"></div>
+
+            <div id = "containerCountryButtons" class = "row padded">
+                <div id = "buttonDeselectAll" class = "skip-one four twelfth"></div>
+                <div id = "buttonSelectAll" class = "skip-two four twelfth"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id = 'rowBars' class = 'row asphalt-bg padded'>
+        <div id = 'sidebarBars' class = 'one fourth padded'>
+            <div class = 'box'></div>
+        </div>
+        <div id = "visualizationBars" class = "three fourth white-bg">
+            <div id = "barCount" class = "row"></div>
+            <div id = "barYield" class = "row"></div>
         </div>
     </div>
 
@@ -114,8 +111,6 @@
             <div class = 'box'></div>
         </div>
         <div id = "visualizationStacked" class = "three fourth white-bg">
-            <div id = "barCount" class = "row"></div>
-            <div id = "barYield" class = "row"></div>
             <div id = "accumulatedTimelineContainer" class="row">
                 <div id = "accumulatedTimelineButtons" class="row">
 
@@ -157,6 +152,7 @@
 <script src="../js/viz.js"></script>
 
 <script>
+
     var fullDateFormat  = d3.time.format("%m/%d/%Y %I:%M:%S %p");
     var minDatePicker = fullDateFormat.parse("1/1/1944 0:00:00 AM"),
         maxDatePicker = fullDateFormat.parse("1/1/1999 0:00:00 AM");
