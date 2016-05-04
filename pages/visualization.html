@@ -29,26 +29,55 @@
 </head>
 <body>
 <div class = 'container asphalt justify'>
-    <div id = "controlSidebar" class = "row asphalt-bg padded sidebar">
+    <div id = "controlSidebar" class = "row asphalt-bg padded">
         <input id="buttonSidebar" type="button" name="buttonSidebar" value = "Hide">
     </div>
     <div id = 'rowToggleAnimation' class = 'row asphalt-bg padded'>
-        <div id = 'sidebarToggleAnimation' class = 'one fourth padded'>
+        <div id = 'sidebarToggleAnimation' class = 'one fourth padded sidebar'>
             <div class = 'box'></div>
         </div>
-        <div id = "visualizationToggleAnimation" class = "three fourth white-bg">
+        <div id = "visualizationToggleAnimation" class = "three fourth asphalt-bg vizbar">
             <div id = "activateAnimation" class = "row padded">
-                <div class = "skip-one one fifth">
-                    <input id="activeAnimation" type="button" name="buttonEAnimation" value = "Animation">
-                </div>
-                <div class = "skip-one one fifth">
-                    <input id="deactiveAnimation" type="button" name="buttonExploration" value = "Exploration">
+                <div class = "skip-one three fifth">
+                    <input id="activeAnimation" type="button" name="buttonAnimation" value = "Exploration" class = "block">
                 </div>
             </div>
 
         </div>
     </div>
-    <div id = 'rowControls' class = 'row asphalt-bg padded'>
+    <div id = 'rowAnimation' class = 'row asphalt-bg padded control' style = 'display: none;'>
+        <div id = 'sidebarAnimation' class = 'one fourth padded sidebar'>
+            <div class = 'box'></div>
+        </div>
+        <div id = "visualizationAnimationControl" class = "three fourth asphalt-bg vizbar">
+            <div id = "buttonsAnimation" class = "row">
+                <div>
+                    <ul class="button-group">
+                        <li>
+                            <button id="animationBack"><i class="icon-step-backward"></i></button>
+                        </li>
+                        <li>
+                            <button id="animationPlay"><i class="icon-play"></i></button>
+                        </li>
+                        <li>
+                            <button id="animationPause"><i class="icon-pause"></i></button>
+                        </li>
+                        <li>
+                            <button id="animationStop"><i class="icon-stop"></i></button>
+                        </li>
+                        <li>
+                            <button id="animationForward"><i class="icon-step-forward"></i></button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id = "rowSliderAnimation" class = "row padded">
+                <div id = "sliderAnimation"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id = 'rowControls' class = 'row asphalt-bg padded control'>
         <div id = 'sidebarControls' class = 'one fourth padded sidebar'>
             <div class = 'box'></div>
         </div>
@@ -89,13 +118,19 @@
 
 
                 <div id = "containerButtons" class = "skip-one three twelfth">
-                    <div id = "buttonRemoveSelection" class = "row padded"></div>
-                    <div id = "buttonRemoveFilters" class = "row padded"></div>
+                    <div class = "row padded">
+                        <input id="buttonRemoveSelection" type="button" name="buttonRemoveSelection" value = "Remove Selection">
+                    </div>
+                    <div class = "row padded">
+                        <input id="buttonRemoveFilters" type="button" name="buttonRemoveFilters" value = "Remove All Filters">
+                    </div>
                 </div>
             </div>
 
             <div id="containerUpdateButton" class="row">
-                <div id="buttonUpdateFilter" class = "eight twelfth"></div>
+                <div class = "eight twelfth">
+                    <input id="buttonUpdateFilter" type="button" name="buttonUpdateFilters" value = "Update" class = "block">
+                </div>
             </div>
         </div>
     </div>
@@ -108,8 +143,12 @@
             <div id = "legendCountries" class = "row padded"></div>
 
             <div id = "containerCountryButtons" class = "row padded">
-                <div id = "buttonDeselectAll" class = "skip-one four twelfth"></div>
-                <div id = "buttonSelectAll" class = "skip-two four twelfth"></div>
+                <div class = "skip-one four twelfth">
+                    <input id = "buttonDeselectAll" type="button" name="buttonDeselectAll" value = "Deselect All Countries">
+                </div>
+                <div class = "skip-two four twelfth">
+                    <input id = "buttonSelectAll" type="button" name="buttonSelectAll" value = "Select All Countries">
+                </div>
             </div>
         </div>
     </div>
@@ -157,38 +196,6 @@
         </div>
     </div>
 
-    <div id = 'rowAnimation' class = 'row asphalt-bg padded'>
-        <div id = 'sidebarAnimation' class = 'one fourth padded sidebar'>
-            <div class = 'box'></div>
-        </div>
-
-            <div id = "buttonsAnimation" class = "row padded vizbar">
-                <div class = "skip-three three ninth">
-                    <ul class="button-group">
-                        <li>
-                            <button><i class="icon-step-backward"></i></button>
-                        </li>
-                        <li>
-                            <button><i class="icon-play"></i></button>
-                        </li>
-                        <li>
-                            <button><i class="icon-pause"></i></button>
-                        </li>
-                        <li>
-                            <button><i class="icon-stop"></i></button>
-                        </li>
-                        <li>
-                            <button><i class="icon-step-forward"></i></button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div id = "rowSliderAnimation" class = "row padded">
-                <div id = "sliderAnimation"></div>
-            </div>
-        </div>
-    </div>
-
     <div id = 'rowScatter' class = 'row asphalt-bg padded'>
         <div id = 'sidebarScatter' class = 'one fourth padded sidebar'>
             <div class = 'box'></div>
@@ -225,13 +232,34 @@
     });
 
     $( "#sliderAnimation" ).slider({
-        animate: "fast"
+        animate: 100,
+        min: new Date('1945.01.01').getTime() / 1000,
+        max: new Date('1999.01.01').getTime() / 1000,
+        step: 86400,
+        value: new Date('1945.01.01').getTime() / 1000,
+        slide: function( event, ui ) {
+            console.log(new Date(ui.value * 1000).toDateString() );
+        }
     });
 
     $("#buttonSidebar").on('click', function(){
-                                    $('.sidebar').hide();
-        $('.vizbar').switchClass('three fourth', 'row');
-        return false;})
+                                    $('.sidebar').toggle();
+                                    if ($('.vizbar').hasClass('three fourth')){
+                                        $('.vizbar').switchClass('three fourth', 'row');
+                                    } else{
+                                        $('.vizbar').switchClass('row', 'three fourth');
+                                    }
+                                    $('svg').remove();
+                                    setTimeout(function() {draw();},500);
+                                    return false;});
+
+    $("#activeAnimation").on('click', function() {
+            $('.control').toggle();
+            var animationButton = $("#activeAnimation");
+            var buttonValue = animationButton.attr('value');
+            buttonValue = buttonValue == 'Exploration' ? 'Animation' : 'Exploration';
+            animationButton.attr('value', buttonValue)
+    });
 </script>
 
 <script type="text/javascript" src="../js/groundwork.all.js"></script>
