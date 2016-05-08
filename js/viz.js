@@ -1,7 +1,7 @@
 //Execute in strict mode
 "use strict";
 
-(function draw(){
+function draw(){
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // MISC (that has to be defined in the beginning)
@@ -12,9 +12,27 @@
      */
     
     var fullDateFormat  = d3.time.format("%m/%d/%Y %I:%M:%S %p");
+
+
+    var months = [  'January',
+                    'February',
+                    'March',
+                    'April',
+                    'May',
+                    'June',
+                    'July',
+                    'August',
+                    'September',
+                    'October',
+                    'November',
+                    'December'];
     
-    
-    
+    /*
+    slider selector
+     */
+
+    var slider = $("#sliderAnimation");
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // OPTIONS
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -248,21 +266,22 @@
     /*
     Tooltip and data point hovering
      */
+
+
+    //check whether string formatting prototype exists
+    if (!String.prototype.format) {
+        String.prototype.format = function() {
+            var args = arguments;
+            return this.replace(/{(\d+)}/g, function(match, number) {
+                return typeof args[number] != 'undefined'
+                    ? args[number]
+                    : match
+                    ;
+            });
+        };
+    }
     
     var tooltipText = function(d){
-            //check whether string formatting prototype exists
-            if (!String.prototype.format) {
-                String.prototype.format = function() {
-                    var args = arguments;
-                    return this.replace(/{(\d+)}/g, function(match, number) {
-                        return typeof args[number] != 'undefined'
-                            ? args[number]
-                            : match
-                            ;
-                    });
-                };
-            }
-    
             //add zero for dates
             var addZero = function(i) {
                     if (i < 10) {
@@ -1342,33 +1361,107 @@
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // IMPLEMENT ANIMATION
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
-    /*
-    var buildAnimationInterface = function(data){
-            d3.select('div#containerAnimation')
-              .select('input.buttonAnimation')
-              .on("click", function(){startAnimation(data);})
-        };
 
-    var updateAnimation = function(date, data){
-        
-    };
-    
-    var startAnimation = function(data){
-            var dates = [];
-            data.forEach(function(d){
-                dates.push(d.datetime)
-            });
-            var minDay = d3.min(dates);
-            var maxDay = d3.max(dates);
-    
-            var days = d3.time.day.utc.range(minDay, maxDay);
-    
-            for (var i = 0; i < days.length; i++){
-                updateAnimation(days[i], data);
+    var getSliderData = function(data){
+        var sliderDate = new Date(slider.slider('option', 'value')*1000);
+        var year = sliderDate.getUTCFullYear();
+        var month = sliderDate.getUTCMonth();
+        var filteredData = data.filter(function(d){
+            if (d.datetime.getUTCFullYear() == year
+                && d.datetime.getUTCMonth() == month){
+                return d;
             }
-        };
+        });
+        return [month, year, filteredData];
+    };
 
-*/
+    var applyStep = function(filteredData, slider, month, year){
+        document.getElementById("rowShowDate").innerHTML = '{0} {1}'.format(months[month], year);
+        fillMap(filteredData);
+    };
+
+    var playAnimation = function(data){
+        //setInterval(stepForward, 5, data)
+        //setInterval does not allow to change interval time, thus due to a lot of months without events, the animation might
+        // get boring
+
+        var steps = (slider.slider('option', 'max') - slider.slider('option', 'value')) / slider.slider('option', 'step');
+
+        (function playLoop(i){
+            if ($("div#rowShowDate").hasClass('paused')){
+                return;
+            }
+            var sliderData = getSliderData(data);
+            var timeout;
+            if (sliderData[2].length != 0){
+                timeout = 1000;
+            }else{
+                timeout = 100;
+            }
+
+            setTimeout(function () {
+                applyStep(sliderData[2], slider, sliderData[0], sliderData[1]);
+                slider.slider('value', slider.slider('option', 'value') + slider.slider('option', 'step'));
+                if (--i) playLoop(i);
+            }, timeout)
+        })(steps);
+    };
+
+    var implementAnimButtons = function(data){
+
+        d3.select('button#animationBack')
+            .on('click', function(){
+                slider.slider('value', slider.slider('option', 'value') - slider.slider('option', 'step'));
+                var sliderData = getSliderData(data);
+                applyStep(sliderData[2], slider, sliderData[0], sliderData[1]);
+            });
+
+        d3.select('button#animationPlay')
+            .on('click', function(){
+                if ($("div#rowShowDate").hasClass('paused')){
+                    $("div#rowShowDate").removeClass('paused');
+                }
+                playAnimation(data);
+            });
+
+        d3.select('button#animationPause')
+            .on('click', function(){
+                $("div#rowShowDate").toggleClass('paused');
+            });
+
+        d3.select('button#animationStop')
+            .on('click', function(){
+                $("div#rowShowDate").toggleClass('paused');
+                slider.slider('value', slider.slider('option', 'min'));
+                var sliderData = getSliderData(data);
+                applyStep(sliderData[2], slider, sliderData[0], sliderData[1]);
+            });
+
+        d3.select('button#animationForward')
+            .on('click', function(){
+                console.log(slider.slider('option', 'value'))
+                slider.slider('value', slider.slider('option', 'value') + slider.slider('option', 'step'));
+                console.log(slider.slider('option', 'value'))
+                var sliderData = getSliderData(data);
+                console.log(sliderData)
+                applyStep(sliderData[2], slider, sliderData[0], sliderData[1]);
+            });
+    };
+
+    var implementAnimInterface = function(data){
+        $("#activeAnimation").on('click', function() {
+            $('.control').toggle();
+            var animationButton = $("#activeAnimation");
+            var buttonValue = animationButton.attr('value');
+            buttonValue = buttonValue == 'Exploration' ? 'Animation' : 'Exploration';
+            animationButton.attr('value', buttonValue);
+            if (buttonValue == 'Animation'){
+                implementAnimButtons(data);
+            }
+        });
+    };
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // EXECUTE
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1398,15 +1491,16 @@
             drawBarYield();
             drawAccumulatedTimeline();
             drawTimeline(d);
-            
-            //Implement animation
-            //buildAnimationInterface(d);
+
+            implementAnimInterface(d);
 
             //Fill Plots
             updatePlots(d);
 
         });
 
-}());
+}
+
+(function(){draw()})();
 
 

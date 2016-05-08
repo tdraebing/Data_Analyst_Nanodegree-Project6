@@ -30,13 +30,13 @@
 <body>
 <div class = 'container asphalt justify'>
     <div id = "controlSidebar" class = "row asphalt-bg padded">
-        <input id="buttonSidebar" type="button" name="buttonSidebar" value = "Hide">
+        <input id="buttonSidebar" type="button" name="buttonSidebar" value = "Toggle Help">
     </div>
     <div id = 'rowToggleAnimation' class = 'row asphalt-bg padded'>
-        <div id = 'sidebarToggleAnimation' class = 'one fourth padded sidebar'>
+        <div id = 'sidebarToggleAnimation' class = 'one fourth padded sidebar' style = 'display: none;'>
             <div class = 'box'></div>
         </div>
-        <div id = "visualizationToggleAnimation" class = "three fourth asphalt-bg vizbar">
+        <div id = "visualizationToggleAnimation" class = "row asphalt-bg vizbar">
             <div id = "activateAnimation" class = "row padded">
                 <div class = "skip-one three fifth">
                     <input id="activeAnimation" type="button" name="buttonAnimation" value = "Exploration" class = "block">
@@ -46,10 +46,10 @@
         </div>
     </div>
     <div id = 'rowAnimation' class = 'row asphalt-bg padded control' style = 'display: none;'>
-        <div id = 'sidebarAnimation' class = 'one fourth padded sidebar'>
+        <div id = 'sidebarAnimation' class = 'one fourth padded sidebar' style = 'display: none;'>
             <div class = 'box'></div>
         </div>
-        <div id = "visualizationAnimationControl" class = "three fourth asphalt-bg vizbar">
+        <div id = "visualizationAnimationControl" class = "row asphalt-bg vizbar">
             <div id = "buttonsAnimation" class = "row">
                 <div>
                     <ul class="button-group">
@@ -74,14 +74,15 @@
             <div id = "rowSliderAnimation" class = "row padded">
                 <div id = "sliderAnimation"></div>
             </div>
+            <div id = "rowShowDate" class = "row padded white-bg"></div>
         </div>
     </div>
 
     <div id = 'rowControls' class = 'row asphalt-bg padded control'>
-        <div id = 'sidebarControls' class = 'one fourth padded sidebar'>
+        <div id = 'sidebarControls' class = 'one fourth padded sidebar' style = 'display: none;'>
             <div class = 'box'></div>
         </div>
-        <div id = "visualizationControls" class = "three fourth vizbar">
+        <div id = "visualizationControls" class = "row vizbar">
             <div class = "row">
 
                 <div id = "containerDateFilter" class = "four twelfth padded">
@@ -136,13 +137,13 @@
     </div>
 
     <div id = 'rowLegend' class = 'row asphalt-bg padded'>
-        <div id = 'sidebarLegend' class = 'one fourth padded sidebar'>
+        <div id = 'sidebarLegend' class = 'one fourth padded sidebar' style = 'display: none;'>
             <div class = 'box'></div>
         </div>
-        <div id = "visualizationLegend" class = "three fourth white-bg vizbar">
+        <div id = "visualizationLegend" class = "row white-bg vizbar">
             <div id = "legendCountries" class = "row padded"></div>
 
-            <div id = "containerCountryButtons" class = "row padded">
+            <div id = "containerCountryButtons" class = "row asphalt-bg padded control">
                 <div class = "skip-one four twelfth">
                     <input id = "buttonDeselectAll" type="button" name="buttonDeselectAll" value = "Deselect All Countries">
                 </div>
@@ -153,21 +154,21 @@
         </div>
     </div>
 
-    <div id = 'rowBars' class = 'row asphalt-bg padded'>
-        <div id = 'sidebarBars' class = 'one fourth padded sidebar'>
+    <div id = 'rowBars' class = 'row asphalt-bg padded control'>
+        <div id = 'sidebarBars' class = 'one fourth padded sidebar' style = 'display: none;'>
             <div class = 'box'></div>
         </div>
-        <div id = "visualizationBars" class = "three fourth white-bg vizbar">
+        <div id = "visualizationBars" class = "row white-bg vizbar">
             <div id = "barCount" class = "row"></div>
             <div id = "barYield" class = "row"></div>
         </div>
     </div>
 
-    <div id = 'rowStacked' class = 'row asphalt-bg padded'>
-        <div id = 'sidebarStacked' class = 'one fourth padded sidebar'>
+    <div id = 'rowStacked' class = 'row asphalt-bg padded control'>
+        <div id = 'sidebarStacked' class = 'one fourth padded sidebar' style = 'display: none;'>
             <div class = 'box'></div>
         </div>
-        <div id = "visualizationStacked" class = "three fourth white-bg vizbar">
+        <div id = "visualizationStacked" class = "row white-bg vizbar">
             <div id = "accumulatedTimelineContainer" class="row">
                 <div id = "accumulatedTimelineButtons" class="row">
 
@@ -188,19 +189,19 @@
     </div>
 
     <div id = 'rowMap' class = 'row asphalt-bg padded'>
-        <div id = 'sidebarMap' class = 'one fourth padded sidebar'>
+        <div id = 'sidebarMap' class = 'one fourth padded sidebar' style = 'display: none;'>
             <div class = 'box'></div>
         </div>
-        <div id = "visualizationMap" class = "three fourth white-bg vizbar">
+        <div id = "visualizationMap" class = "row white-bg vizbar">
             <div id = "map" class = "row"></div>
         </div>
     </div>
 
-    <div id = 'rowScatter' class = 'row asphalt-bg padded'>
-        <div id = 'sidebarScatter' class = 'one fourth padded sidebar'>
+    <div id = 'rowScatter' class = 'row asphalt-bg padded control'>
+        <div id = 'sidebarScatter' class = 'one fourth padded sidebar' style = 'display: none;'>
             <div class = 'box'></div>
         </div>
-        <div id = "visualizationScatter" class = "three fourth white-bg vizbar">
+        <div id = "visualizationScatter" class = "row white-bg vizbar">
             <div id = "timeline" class = "row"></div>
         </div>
     </div>
@@ -235,7 +236,7 @@
         animate: 100,
         min: new Date('1945.01.01').getTime() / 1000,
         max: new Date('1999.01.01').getTime() / 1000,
-        step: 86400,
+        step: 30.5 * 86400,
         value: new Date('1945.01.01').getTime() / 1000,
         slide: function( event, ui ) {
             console.log(new Date(ui.value * 1000).toDateString() );
@@ -243,23 +244,17 @@
     });
 
     $("#buttonSidebar").on('click', function(){
-                                    $('.sidebar').toggle();
-                                    if ($('.vizbar').hasClass('three fourth')){
-                                        $('.vizbar').switchClass('three fourth', 'row');
-                                    } else{
-                                        $('.vizbar').switchClass('row', 'three fourth');
-                                    }
-                                    $('svg').remove();
-                                    setTimeout(function() {draw();},500);
-                                    return false;});
+        $('.sidebar').toggle(100);
+        if ($('.vizbar').hasClass('three fourth')){
+            $('.vizbar').switchClass('three fourth', 'row');
+        } else{
+            $('.vizbar').switchClass('row', 'three fourth');
+        }
+        $('svg').remove();
+        setTimeout(function() {draw();},500);
+        return false;});
 
-    $("#activeAnimation").on('click', function() {
-            $('.control').toggle();
-            var animationButton = $("#activeAnimation");
-            var buttonValue = animationButton.attr('value');
-            buttonValue = buttonValue == 'Exploration' ? 'Animation' : 'Exploration';
-            animationButton.attr('value', buttonValue)
-    });
+
 </script>
 
 <script type="text/javascript" src="../js/groundwork.all.js"></script>
