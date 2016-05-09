@@ -680,53 +680,23 @@ function draw(){
 
     var buildFilterForm = function(data){
         //create button for selecting all
-        d3.select('div#buttonSelectAll')
-          .append('input')
-          .attr('type', 'button')
-          .attr("name", "selectAll")
-          .attr("value", "Select all Countries")
-          .attr("class", "block")
-          .on("click", function(){selectAllCountries(data);});
+        $('#buttonSelectAll').on("click", function(){selectAllCountries(data);});
         
         //create button for deselecting all
-        d3.select('div#buttonDeselectAll')
-          .append('input')
-          .attr('type', 'button')
-          .attr("name", "deselectAll")
-          .attr("value", "Deselect all Countries")
-          .attr("class", "block")
-          .on("click", function(){deselectAllCountries(data);});
+        $('#buttonDeselectAll').on("click", function(){deselectAllCountries(data);});
 
         //create button to remove selection
-        d3.select('div#buttonRemoveSelection')
-          .append('input')
-          .attr('type', 'button')
-          .attr("name", "removeSelection")
-          .attr("value", "Remove Selection")
-          .attr("class", "block")
-          .on("click", function(){
+        $('#buttonRemoveSelection').on("click", function(){
                 d3.selectAll(".brush")
                   .call(brush.clear());
                 updatePlots(data);
           });
 
         //create button for removing all filters
-        d3.select('div#buttonRemoveFilters')
-          .append('input')
-          .attr('type', 'button')
-          .attr("name", "removeFilters")
-          .attr("value", "Remove all Filters")
-          .attr("class", "block")
-          .on("click", function(){removeAllFilters(data);});
+        $('#buttonRemoveFilters').on("click", function(){removeAllFilters(data);});
         
         //create button to apply form
-        d3.select('div#buttonUpdateFilter')
-          .append('input')
-          .attr('type', 'button')
-          .attr("name", "updateFilters")
-          .attr("value", "Update")
-          .attr("class", "block")
-          .on("click", function(){
+        $('#buttonUpdateFilter').on("click", function(){
               brushControl();
           });
     };
