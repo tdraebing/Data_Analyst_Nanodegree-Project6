@@ -71,3 +71,5 @@ circle.greyed {
     font: 10px sans-serif;
     text-anchor: end;
 }
+
+div.helpbox {overflow: auto;}

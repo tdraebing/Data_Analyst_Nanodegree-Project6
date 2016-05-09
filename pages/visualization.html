@@ -32,12 +32,16 @@
     <div id = "controlSidebar" class = "row asphalt-bg padded">
         <input id="buttonSidebar" type="button" name="buttonSidebar" value = "Toggle Help">
     </div>
-    <div id = 'rowToggleAnimation' class = 'row asphalt-bg padded'>
-        <div id = 'sidebarToggleAnimation' class = 'one fourth padded sidebar' style = 'display: none;'>
-            <div class = 'box'></div>
+    <div id = 'rowToggleAnimation' class = 'row asphalt-bg padded' style = 'height: 120px'>
+        <div id = 'sidebarToggleAnimation' class = 'one fourth pad-right sidebar' style = 'display: none;'>
+            <div class = 'helpbox white-bg half-padded' style = 'height: 100px;'>
+                Use this button to switch between <b> exploration </b> and <b> animation </b> mode. The exploration mode lets you explore
+                the data by allowing you to select subsets of data and looking at them in different kinds of visualization.
+                In animation mode you can watch a time lapse animation of nuclear weapon explosions on the world map.
+            </div>
         </div>
         <div id = "visualizationToggleAnimation" class = "row asphalt-bg vizbar">
-            <div id = "activateAnimation" class = "row padded">
+            <div id = "activateAnimation" class = "row padded" style = 'height: 100px;'>
                 <div class = "skip-one three fifth">
                     <input id="activeAnimation" type="button" name="buttonAnimation" value = "Exploration" class = "block">
                 </div>
@@ -46,8 +50,13 @@
         </div>
     </div>
     <div id = 'rowAnimation' class = 'row asphalt-bg padded control' style = 'display: none;'>
-        <div id = 'sidebarAnimation' class = 'one fourth padded sidebar' style = 'display: none;'>
-            <div class = 'box'></div>
+        <div id = 'sidebarAnimation' class = 'one fourth pad-right sidebar' style = 'display: none;'>
+            <div class = 'helpbox white-bg half-padded' style = 'height: 100px;'>
+                This control panel allows you to control the animation. The buttons work just like any common audio- or
+                video player. The dropdown menu next to it allows you to choose the speed of the animation by choosing
+                whether the data should be accumulated by days, months or years. By moving the slider you ca also directly
+                jump to a certain time point.
+            </div>
         </div>
         <div id = "visualizationAnimationControl" class = "row asphalt-bg vizbar">
             <div id = "buttonsAnimation" class = "row">
@@ -85,8 +94,14 @@
     </div>
 
     <div id = 'rowControls' class = 'row asphalt-bg padded control'>
-        <div id = 'sidebarControls' class = 'one fourth padded sidebar' style = 'display: none;'>
-            <div class = 'box'></div>
+        <div id = 'sidebarControls' class = 'one fourth pad-right sidebar' style = 'display: none;'>
+            <div class = 'helpbox white-bg half-padded' style = 'height: 140px;'>
+                This control panel allows you to select data points depending on the date range and range of explosion yield.
+                After entering the respective ranges press the “Update”-button to apply your selection. Clicking the button
+                “Remove Selection” will reset those ranges to include all data points. The button “Remove All Filters” will
+                also reset the range filters and additionally also again include all countries into the visualization.
+                (Read the box below to learn how to select/deselect countries.)
+            </div>
         </div>
         <div id = "visualizationControls" class = "row vizbar">
             <div class = "row">
@@ -142,9 +157,10 @@
         </div>
     </div>
 
-    <div id = 'rowLegend' class = 'row asphalt-bg padded'>
-        <div id = 'sidebarLegend' class = 'one fourth padded sidebar' style = 'display: none;'>
-            <div class = 'box'></div>
+    <div id = 'rowLegend' class = 'row asphalt-bg padded' style = 'height: 180px;'>
+        <div id = 'sidebarLegend' class = 'one fourth pad-right sidebar' style = 'display: none;'>
+            <div class = 'helpbox white-bg half-padded helpLegend' style = 'height: 170px;'>
+            </div>
         </div>
         <div id = "visualizationLegend" class = "row white-bg vizbar">
             <div id = "legendCountries" class = "row padded"></div>
@@ -163,8 +179,11 @@
     </div>
 
     <div id = 'rowBars' class = 'row asphalt-bg padded control'>
-        <div id = 'sidebarBars' class = 'one fourth padded sidebar' style = 'display: none;'>
-            <div class = 'box'></div>
+        <div id = 'sidebarBars' class = 'one fourth pad-right sidebar' style = 'display: none;'>
+            <div class = 'helpbox white-bg half-padded' style = 'height: 190px;'>
+                This visualization shows a summary of the data by showing you the total number of explosions and the accumulated
+                yield by country. This visualization reacts on the selections you performed on the data.
+            </div>
         </div>
         <div id = "visualizationBars" class = "row white-bg vizbar">
             <div id = "barCount" class = "row"></div>
@@ -173,8 +192,12 @@
     </div>
 
     <div id = 'rowStacked' class = 'row asphalt-bg padded control'>
-        <div id = 'sidebarStacked' class = 'one fourth padded sidebar' style = 'display: none;'>
-            <div class = 'box'></div>
+        <div id = 'sidebarStacked' class = 'one fourth pad-right sidebar' style = 'display: none;'>
+            <div class = 'helpbox white-bg half-padded' style = 'height: 490px;'>
+                This visualization adds the time factor to the visualization above. It reacts on the selection of countries,
+                but not on the selection of a time- or yield interval. Using the buttons above the plot allows you to switch
+                between a relative or absolute representation and whether the number of explosions or their yield is shown.
+            </div>
         </div>
         <div id = "visualizationStacked" class = "row white-bg vizbar">
             <div id = "accumulatedTimelineContainer" class="row">
@@ -197,8 +220,9 @@
     </div>
 
     <div id = 'rowMap' class = 'row asphalt-bg padded'>
-        <div id = 'sidebarMap' class = 'one fourth padded sidebar' style = 'display: none;'>
-            <div class = 'box'></div>
+        <div id = 'sidebarMap' class = 'one fourth pad-right sidebar' style = 'display: none;'>
+            <div class = 'helpbox white-bg half-padded helpMap' style = 'height: 450px;'>
+            </div>
         </div>
         <div id = "visualizationMap" class = "row white-bg vizbar">
             <div id = "map" class = "row"></div>
@@ -206,8 +230,14 @@
     </div>
 
     <div id = 'rowScatter' class = 'row asphalt-bg padded control'>
-        <div id = 'sidebarScatter' class = 'one fourth padded sidebar' style = 'display: none;'>
-            <div class = 'box'></div>
+        <div id = 'sidebarScatter' class = 'one fourth pad-right sidebar' style = 'display: none;'>
+            <div class = 'helpbox white-bg half-padded' style = 'height: 450px;'>
+                This scatter plot shows every data point plotting the explosion yield over time. The color of the circles
+                represents the country of origin. The size represents the yield (linear scale). Hovering over a data point
+                will show a tool tip with more information and highlight the respective point in the map above. By dragging
+                a box over data points you can select and filter the data points by time and yield (same as doing it in the
+                control panel above). Inactive data points will be greyed out. This plot reacts on filtering for countries of origin.
+            </div>
         </div>
         <div id = "visualizationScatter" class = "row white-bg vizbar">
             <div id = "timeline" class = "row"></div>

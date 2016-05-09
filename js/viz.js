@@ -1529,8 +1529,10 @@ function draw(){
             implementAnimButtons(data);
             d3.select('div#legendCountries')
                 .selectAll('circle')
-                .on('click', null)
-        }else{
+                .on('click', null);
+            $('.helpLegend').html('This box contains the legend explaining the colors of the data points. In contrast to the exploration mode, countries cannot be filtered for in animation mode. The current time point of the animation is shown below.');
+            $('.helpMap').html('This map labels the countries that launched nuclear bombs in their respective colors (Please be aware that it was not taken into account that the borders have changed over time. Only the modern borders are shown.) The location of nuclear weapon explosion is marked on the map by circles. The color of the circles represents the country of origin. The size represents the yield (linear scale). It updates with the time laps animation or when selecting a time point with the slider.');
+      }else{
             d3.select('div#legendCountries')
                 .selectAll('circle')
                 .on('click', function(){
@@ -1543,8 +1545,9 @@ function draw(){
                         .style("opacity", newOpacity);
                     updatePlots(data);
                 });
-            $("div#rowShowDate").toggleClass('stopped');
-        }
+            $("div#rowShowDate").toggleClass('stopped');}
+            $('.helpLegend').html('This box contains the legend explaining the colors of the data points. By clicking on the points you can select/deselect countries and thereby add/remove them from the visualizations. For your convenience you can either select or deselect all countries at once using the respective buttons below the legends.');
+            $('.helpMap').html('This map labels the countries that launched nuclear bombs in their respective colors (Please be aware that it was not taken into account that the borders have changed over time. Only the modern borders are shown.) The location of nuclear weapon explosion is marked on the map by circles. The color of the circles represents the country of origin. The size represents the yield (linear scale). The map is respondent to selections made on the data. Hovering over a data point will show a tool tip with more information and highlight the respective point in the scatter plot below.');
     };
 
     var implementAnimInterface = function(data){
