@@ -85,7 +85,7 @@
                             <a href="./pages/resources.html" id="default" onClick="changeFrame(this.href); return false;">Resources</a>
                         </li>
                         <li>
-                            <a href="./pages/dataset.php" id="default" onClick="changeFrame(this.href); return false;">Data Set</a>
+                            <a href="./pages/dataset.html" id="default" onClick="changeFrame(this.href); return false;">Data Set</a>
                         </li>
                         <li>
                             <a href="./pages/sourcecode.html" id="default" onClick="changeFrame(this.href); return false;">Source Code</a>
