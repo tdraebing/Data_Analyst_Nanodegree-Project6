@@ -306,9 +306,6 @@ function draw(){
                                                                         d.datetime.getUTCFullYear(),
                                                                 addZero(d.datetime.getUTCHours()),
                                                                 addZero(d.datetime.getUTCMinutes()))
-                    + "Longitude: {0}<br/>".format(d.longitude)
-                    + "Latitude: {0}<br/>".format(d.latitude)
-                    + "Testing Country: {0}<br/>".format(d.Country)
                     + "Maximum Yield: {0}<br/>".format(showNA(d.max_yield))
                     + "Explosion Medium: {0}<br/>".format(d.medium)
                     + "Confirmation: {0}<br/>".format(d.confirmation)

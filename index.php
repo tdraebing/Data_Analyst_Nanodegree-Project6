@@ -48,9 +48,25 @@
                 <p>
                     The data shows some interesting events in the history of the cold war. For example the Bilateral testing ban
                     between 1958 and 1961, marked by no nuclear weapon explosions initiated by the USA or USSR. The explosion of the biggest
-                    nuclear weapon tested: the Zar Bomb in 1961. Also that from the sixties on there seem to be standardized
-                    bomb sizes that were tested.
+                    nuclear weapon tested: the Zar Bomb in 1961. Also from the sixties onwards, countries seem to use mostly standardized
+                    bomb sizes for tests.
                 </p>
+
+                <div class = "info box">
+                    If you need help with using this visualization use the button in the upper left corner to open a sidebar
+                    that contains short hints and explanations about the functionality of the single elements.
+                </div>
+                <p></p>
+
+                <div class = "error box">
+                    <p>This visualization may not be displayed correctly on small screens or in small browser windows.</p>
+                </div>
+                <p></p>
+
+                <div class = "error box">
+                    <p>This visualization might need larger amounts of computing resources, thus older phones might have problems 
+                        displaying the visualization.</p>
+                </div>
             </div>
 
             <div class="row padded">

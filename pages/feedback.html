@@ -21,17 +21,132 @@
 </head>
 <body>
 <div class = 'container asphalt justify'>
-    <h3>Planned Features</h3>
+    <h3>Planned Features or My Own Feedback</h3>
     <ul>
-        <li>Improved responsiveness of visualization (work around implemented by adding scroll bar to div)</li>
+        <li><del>Improved responsiveness of visualization (work around implemented by adding scroll bar to div)</del></li>
+        <p class="red">Should work for most screen sizes now. But there will probably be some problems for very small screens.</p>
         <li><del>Interactive adjustment of circle radii</del></li>
+        <p class="red">Removed, since it was not very intuitive and did not improve the visualization.</p>
+        <li><del>Adding additional plots. E.g. Medium</del></li>
+        <p class="red">Done.</p>
+        <li><del>Animated time lapse (work in progress)</del></li>
+        <p class="red">Done.</p>
         <li>Better scaling of circle radii</li>
+        <p class="red">So far I could not find a better transformation method.</p>
         <li>Improved data representation on map</li>
+        <p class="red">Overlapping data points make it difficult to use filled forms, thus so far no change.</p>
         <li>Color Blind Mode (optional different shapes)</li>
         <li>Zoomable scatter plot</li>
-        <li>Animated time lapse (work in progress)</li>
         <li>Interactive data table with link to map and plot</li>
-        <li><del>Adding additional plots. E.g. Medium</del></li>
+    </ul>
+
+    <h3>Feedback by Udacity Users</h3>
+    <p>
+        <a href="https://discussions.udacity.com/t/final-project-feedback-visualizing-nuclear-weapon-testing-data">Udacity Forums</a></br>
+        <a href="https://plus.google.com/113721559835252628536/posts/RPskxAsdxup">Google+</a>
+    </p>
+
+    <p><b>A big thanks for all those of you, who gave me such amazing feedback!</b></p>
+
+    <h4>Martin (Udacity Forums)</h4>
+    <ul>
+        <li>I understand from your description that you chose the colors (for the US and UDSSR, I guess) according to the
+            Cold War factions - however they don't seem intuitive to me. Also, there are many more countries coming up
+            that can't really get justified according to this, so then it altogether becomes a bit unclear why which color.</li>
+        <p class="red">Martin is right in that I chose the colors according to the Cold War factions. Blue-ish colors for the Allied forces,
+        red-ish for Communist forces and green-ish colors for India and Pakistan, since these two countries represent their
+        own conflict. I actually do not know how to improve this, since I think random colors are even less intuitive and
+        actually would mean a loss of visualized information. To improve intuitiveness I will add my reasoning to the description.</p>
+
+        <li>Secondly, the colors are somewhat "grayish". You probably chose to not make them too bright because that would
+            be confusing, but maybe you could try using opacity instead of how it's now.</li>
+        <p class="red">I chose the 'grayish' colors for exactly that reason. Before doing so I actually tried working with opacity, but
+        that turned out to not work very well. But it is probably also a matter of taste.</p>
+
+        <li>I'd put the legend at the start. I think it's easier to orientate going down the visualizations if you have
+            the understanding of which color is which country (and that colors represent countries) upfront.</li>
+        <p class="red">Done.</p>
+
+        <li>Here I don't really have a suggestion right away (I'll come back to you in case I come up with something).
+            I think it's good that you structured the information so that there's not too much writing on the main page
+            at any point, distracting from the visualizations.
+            However, I found it kind of confusing to be clicking the tabs and seeing only the text change, but the page
+            jump around (because of the different lengths). It kind of made the expectation that there would be different
+            pages, while only the text changed.
+            I thought of using a modal box, but I think it's good that you can have each text and explore the visualization
+            alongside. Maybe you could try using a fixed-size window for the text (with scrolling), so that only the content
+            of that frame would change (the different texts), and avoid the jumping around of the rest of the content.
+            This would maybe make it more straightforward what is going on. : )</li>
+        <p class="red">I changed the complete layout of the webpage. Using a menu instead of a tab based layout and creating a single page
+        for each part of the report should have improved the overall structure.</p>
+
+        <li>I would try to make the buttons more obvious from within the visualization. There should be no need to read
+            in order to find them (other people might find them anyways, but since I didn't, there are surely also some
+            others who won't)</li>
+        <p class="red">Since I do not want to overload the visualization with big buttons, I tried to tackle this problem in a different way.
+        The overall intuitiveness seems to be pretty ba. There is a lot going on and reading and searching a long text
+        might not be what a user might do. So I added a frame with a short help text for each part of the visualization,
+        that can be toggled with a button on top.</p>
+
+        <li>Maybe you could have the absolute amount of explosions as the starting graph. This might be a personal choice,
+            but I find that one more interesting as the first thing to see, and the relative one if I want to explore further.</li>
+        <p class="red">I decided to use the relative representation, since the dynamic range of the data is huge, which leads to very small
+        bars for most years, which again in my opinion gives slightly less information on a first glance. Thus I kept it
+        that way.</p>
+
+        <li>yep, a possibility to zoom in would be great, because there are often many points on the same spots</li>
+        <p class="red">That is definitely a thing I would like to implement, but also a very complicated thing to do taking into account
+        that the different visualizations are connected. Thus (at least for now) I did not implement it.</p>
+
+        <li>Maybe there is no need to put all the information into the tooltip, but instead choose some that you find more
+            interesting and relevant. Many things could be encoded differently (e.g. yield by size of circle; country is
+            already clear and so is longitude and latitude (by the map position)); So I would keep name, date and explosion
+            medium - and yield I'd try to encode in circle size.</li>
+        <p class="red">I removed the coordinates and countries from the tooltips. I left the yield, since I am not completely happy
+        with the encoding in circle size so far.</p>
+
+        <li>For me it wasn't clear that I could select a country to display only the explosions associated to the country selected.
+            It's a very cool feature (because I think the scatterplot is otherwise a bit overloaded). I guess that's also
+            the reason why you have the "legend" at the bottom. But maybe it's fair to have these two functionalities separate
+            (legend vs. button for scatterplot).</li>
+        <p class="red">The help frame should also help with this issue.</p>
+
+        <li>The option to select more countries and compare the dots is interesting, but through the fact that any that
+            are not selected are grayed out, it becomes difficult to understand what is what. Why did you choose not to
+            make them keep their colors? This would feel more intuitive to me.</li>
+        <p class="red">This is actually what I tried first. While it helps with keeping the information of the country
+        of origin after selection, it makes it difficult to determine which points in the border region of the brush
+            are selected and which not. I am not sure about this and will keep it in mind. It is definitely a valid point.</p>
+
+        <li>Also: I didn't understand how to work with the "Circle Size" option (or any of the options, really).
+            But maybe they are not yet fully implemented.</li>
+        <p class="red">I removed it. See statement in the beginning of this section.</p>
+
+        <li>I figured out eventually that the date is by default set to only one day in 1944 - instead of to the full
+            available time span. This is, however, what I would have expected the setting to be (considering that this
+            is also what the graphs are showing on first load of the page!)</li>
+        <p class="red">Fixed.</p>
+
+        <h4>John Enyeart (Google+)</h4>
+
+        <li>As far as the visualization, it took me a little while to realize how to interact with it. I like the idea
+            of being able to select based on time and yield, but it wasn't obvious that I needed to draw a rectangle to
+            do so. It might help if you had some text on each graphic with simple explanations of how to interact with it.
+        </li>
+        <p class="red">Should be dealt with by implementing the help frame.</p>
+
+        <li>Also, it might be interesting to add a scroll bar at the bottom of either the map or the yield/year plot so
+            that you can scroll through time and see all the tests done in a certain year (which would kind of be mimicking
+            the Isao Hashimoto video, but more interactive).</li>
+        <p class="red">I added an animation mode that allows for that.</p>
+
+        <li>
+            As far as using the log scale for the explosions, I'm not sure if there's any way around it, but maybe you
+            could play around with other transformations like square root. Also, maybe you could make the visualization
+            on the map some combination of size and color intensity based on the yield.</li>
+        <p class="red">So far I could not find a really good transformation. And using color intensity would not help, I
+        think, since most users would not notice and it might be hard to distinguish between intensities, especially
+            since there are already quite some colors.</p>
     </ul>
 </div>
 

@@ -24,26 +24,37 @@
         <h2>Design</h2>
         <p>The visualization consists of several parts: <br>
         <ul>
-            <li>Single-Bar Charts</li>
-            <li>Stacked Bar Chart</li>
-            <li>Map</li>
-            <li>Scatter Plot</li>
+            <li>An user-driven exploration mode: </li>
+            <ul>
+                <li>Single-Bar Charts</li>
+                <li>Stacked Bar Chart</li>
+                <li>Map</li>
+                <li>Scatter Plot</li>
+            </ul>
+            <li>An author-driven animation mode: </li>
+            <ul>
+                <li>Animated Map</li>
+            </ul>
+
         </ul>
         </p>
         <p><h3><b>Colors</b></h3>
         The color of the data representations always represents the nation that initiated the explosion.
-        the colors were chosen to represent the different factions during the cold war. A legend
-        can be found under the visualization.
+        They were chosen to represent the different factions during the cold war or the conflict between India and Pakistan,
+        respectively. A legend explaining the colors can be found above the visualization.
         </p>
         <p><h3><b>Single-Bar Charts</b></h3>
         Single bars representing the amount of nuclear weapon explosions or accumulated yield of the selected
         data points. The data is ordered to group nations of the same factions. The plot reacts on the filtering
         possibilities described below and allows to summarize the data selection.
+        This plot was added to the project, because it allows to easily grasp the whole extent of nuclear weapon testing.
         </p>
         <p><h3><b>Stacked Bar Chart</b></h3>
         The stacked bar chart shows the distribution of nuclear weapon explosion count or yield for every year per
         nation. The user can choose between an absolute or relative scale and whether to show the count or the yield
         by pressing the buttons in the upper right corner.
+        While being nice to visualize the full extent of nuclear testing, single-bar charts cannot deal with the time factor.
+        This plot remedies that and allows to compare the extent of nuclear weapon testing over time.
         </p>
         <p><h3><b>Map</b></h3>
         The countries who performed nuclear weapon tests are marked with their respective color. The borders
@@ -59,14 +70,24 @@
         to be able to calculate the logarithm.
         </p>
         <p><h3><b>Interactivity</b></h3>
-        The visualization is highly interactive. In the control form under the visualization the scale of the
-        circle sizes can be adjusted by changing the maximum and minimum sizes. Additionally data points can be
-        filtered by time and yield using the respective form elements or by selecting the data points in the
+        The visualization is highly interactive. In the control form at the top of the visualization data points can be
+        filtered by time and yield using the respective form elements or additionally by selecting the data points in the
         scatter plot by drawing a frame around them. The countries can be deselected and selected by clicking
         on the respective circles in the legend. For convenience buttons to select or deselect all data points
         were added.
         Hovering over data points on the map or scatter plot opens a tooltip with additional information and
         highlights the data point in both the scatter plot and map.
+        </p>
+        <p><h3><b>Help</b></h3>
+        Since the functionality of the visualization is quite complex, a sidebar containing short help texts was added.
+        This sidebar can be opened by clicking on a button in the upper left corner.
+        </p>
+        <p><h3><b>Animation</b></h3>
+        In addition to the user-driven exploration mode an animation mode was added. This mode allows to play a time lapse
+        animation, in which the data points of a certain time range are plotted on the map. The time ranges used to accumulate
+        the data can be chosen to be days, months or years to allow for different animation speeds. The animation can be played,
+        paused, stopped and progressed step-by-step using video player-like controls. By using the slider manually
+        the user can select a time point to view the nuclear weapon explosions during this day/month/year.
         </p>
     </div>
 
