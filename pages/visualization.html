@@ -29,10 +29,10 @@
 </head>
 <body>
 <div class = 'container asphalt justify'>
-    <div id = "controlSidebar" class = "row asphalt-bg padded">
+    <div id = "controlSidebar" class = "row asphalt-bg padded equalize">
         <input id="buttonSidebar" type="button" name="buttonSidebar" value = "Toggle Help">
     </div>
-    <div id = 'rowToggleAnimation' class = 'row asphalt-bg padded' style = 'height: 120px'>
+    <div id = 'rowToggleAnimation' class = 'row asphalt-bg padded equalize'>
         <div id = 'sidebarToggleAnimation' class = 'one fourth pad-right sidebar' style = 'display: none;'>
             <div class = 'helpbox white-bg half-padded' style = 'height: 100px;'>
                 Use this button to switch between <b> exploration </b> and <b> animation </b> mode. The exploration mode lets you explore
@@ -41,7 +41,7 @@
             </div>
         </div>
         <div id = "visualizationToggleAnimation" class = "row asphalt-bg vizbar">
-            <div id = "activateAnimation" class = "row padded" style = 'height: 100px;'>
+            <div id = "activateAnimation" class = "row padded">
                 <div class = "skip-one three fifth">
                     <input id="activeAnimation" type="button" name="buttonAnimation" value = "Exploration" class = "block">
                 </div>
@@ -49,7 +49,7 @@
 
         </div>
     </div>
-    <div id = 'rowAnimation' class = 'row asphalt-bg padded control' style = 'display: none;'>
+    <div id = 'rowAnimation' class = 'row asphalt-bg padded control equalize' style = 'display: none;'>
         <div id = 'sidebarAnimation' class = 'one fourth pad-right sidebar' style = 'display: none;'>
             <div class = 'helpbox white-bg half-padded' style = 'height: 100px;'>
                 This control panel allows you to control the animation. The buttons work just like any common audio- or
@@ -93,7 +93,7 @@
         </div>
     </div>
 
-    <div id = 'rowControls' class = 'row asphalt-bg padded control'>
+    <div id = 'rowControls' class = 'row asphalt-bg padded control equalize'>
         <div id = 'sidebarControls' class = 'one fourth pad-right sidebar' style = 'display: none;'>
             <div class = 'helpbox white-bg half-padded' style = 'height: 140px;'>
                 This control panel allows you to select data points depending on the date range and range of explosion yield.
@@ -157,7 +157,7 @@
         </div>
     </div>
 
-    <div id = 'rowLegend' class = 'row asphalt-bg padded' style = 'height: 180px;'>
+    <div id = 'rowLegend' class = 'row asphalt-bg padded equalize'>
         <div id = 'sidebarLegend' class = 'one fourth pad-right sidebar' style = 'display: none;'>
             <div class = 'helpbox white-bg half-padded helpLegend' style = 'height: 170px;'>
             </div>
@@ -178,7 +178,7 @@
         </div>
     </div>
 
-    <div id = 'rowBars' class = 'row asphalt-bg padded control'>
+    <div id = 'rowBars' class = 'row asphalt-bg padded control equalize'>
         <div id = 'sidebarBars' class = 'one fourth pad-right sidebar' style = 'display: none;'>
             <div class = 'helpbox white-bg half-padded' style = 'height: 190px;'>
                 This visualization shows a summary of the data by showing you the total number of explosions and the accumulated
@@ -191,7 +191,7 @@
         </div>
     </div>
 
-    <div id = 'rowStacked' class = 'row asphalt-bg padded control'>
+    <div id = 'rowStacked' class = 'row asphalt-bg padded control equalize'>
         <div id = 'sidebarStacked' class = 'one fourth pad-right sidebar' style = 'display: none;'>
             <div class = 'helpbox white-bg half-padded' style = 'height: 490px;'>
                 This visualization adds the time factor to the visualization above. It reacts on the selection of countries,
@@ -219,7 +219,7 @@
         </div>
     </div>
 
-    <div id = 'rowMap' class = 'row asphalt-bg padded'>
+    <div id = 'rowMap' class = 'row asphalt-bg padded equalize'>
         <div id = 'sidebarMap' class = 'one fourth pad-right sidebar' style = 'display: none;'>
             <div class = 'helpbox white-bg half-padded helpMap' style = 'height: 450px;'>
             </div>
@@ -229,7 +229,7 @@
         </div>
     </div>
 
-    <div id = 'rowScatter' class = 'row asphalt-bg padded control'>
+    <div id = 'rowScatter' class = 'row asphalt-bg padded control equalize'>
         <div id = 'sidebarScatter' class = 'one fourth pad-right sidebar' style = 'display: none;'>
             <div class = 'helpbox white-bg half-padded' style = 'height: 450px;'>
                 This scatter plot shows every data point plotting the explosion yield over time. The color of the circles
