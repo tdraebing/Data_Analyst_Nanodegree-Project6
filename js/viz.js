@@ -1044,9 +1044,7 @@ function draw(){
                    .attr('cy', function(d) {
                         return d.coords[1];
                    })
-                   .attr('r', function(d) {
-                        return getRadius(d['max_yield'], data);
-                   })
+                   .attr('r', 1)
                    .attr('fill', 'rgba(0, 0, 0, 0)')
                    .attr('stroke', function(d) {
                         return getColor(d.Country);
@@ -1070,8 +1068,37 @@ function draw(){
                         onCoordOut(this, data);
                    });
 
+            if(data.length != 0){
+                if ($("#activeAnimation").hasClass("Animation")){
+                    d3.select("#map")
+                        .select(".svgMap")
+                        .selectAll("circle")
+                        .transition().duration(1000)
+                        .attr('r', function(d) {
+                            return getRadius(d['max_yield'], data) + 10;
+                        });
+
+                    d3.select("#map")
+                        .select(".svgMap")
+                        .selectAll("circle")
+                        .transition().delay(1250).duration(1000)
+                        .attr('r', function(d) {
+                            return getRadius(d['max_yield'], data);
+                        });
+                } else {
+                    d3.select("#map")
+                        .select(".svgMap")
+                        .selectAll("circle")
+                        .attr('r', function(d) {
+                            return getRadius(d['max_yield'], data);
+                        });
+                }
+            }
+
+
             // removing filtered out data points
-            circles.exit().remove();
+            circles.exit()
+                .remove();
         };
 
     /*
@@ -1257,6 +1284,7 @@ function draw(){
             // Loop through each symbol / key
             dataLegend.forEach(function(d, i) {
                 svgLegend.append("circle")
+                         .attr('class', 'legendCircle')
                          .attr("cx", (legendSpace / 2) + i * legendSpace)
                          .attr("cy", 30)
                          .attr('r', dimensions.legend.width / 50)
@@ -1265,16 +1293,6 @@ function draw(){
                          .classed('active', true)
                          .style("fill", function() {
                                 return d.values[0].color})
-                         .on('click', function(){
-                                var active   = d3.select(this).classed('active') ? false : true,
-                                    newOpacity = active ? 0.9 : 0.5;
-                                d3.select(this)
-                                    .classed('active', function(){return active; })
-                                    .transition()
-                                    .duration(200)
-                                    .style("opacity", newOpacity);
-                                updatePlots(data);
-                         });
         
                 svgLegend.append("text")
                          .attr("x", (legendSpace / 2) + i * legendSpace)
@@ -1363,20 +1381,56 @@ function draw(){
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
 
     var getSliderData = function(data){
-        var sliderDate = new Date(slider.slider('option', 'value')*1000);
-        var year = sliderDate.getUTCFullYear();
-        var month = sliderDate.getUTCMonth();
-        var filteredData = data.filter(function(d){
-            if (d.datetime.getUTCFullYear() == year
-                && d.datetime.getUTCMonth() == month){
-                return d;
-            }
-        });
-        return [month, year, filteredData];
+        var animSpeedSelection = $( "#animSpeed option:selected" ).text();
+        var sliderDate = slider.slider('option', 'value');
+        console.log(sliderDate)
+
+        var year;
+        var month;
+        var day;
+
+        var filteredData;
+        var dateString;
+
+        if (animSpeedSelection == "Days"){
+            sliderDate = new Date(sliderDate * 1000)
+            year = sliderDate.getUTCFullYear();
+            month = sliderDate.getUTCMonth();
+            day = sliderDate.getUTCDate();
+            filteredData = data.filter(function(d){
+                if (d.datetime.getUTCFullYear() == year
+                    && d.datetime.getUTCMonth() == month
+                    && d.datetime.getUTCDate() == day){
+                    return d;
+                }
+            });
+            dateString = "<p class = 'align-center large'><b>{0}. {1} {2}</p>".format(day, months[month], year)
+        } else if (animSpeedSelection == "Months"){
+            year = Math.floor(sliderDate / 12) + 1945;
+            month = sliderDate % 12;
+            filteredData = data.filter(function(d){
+                if (d.datetime.getUTCFullYear() == year
+                    && d.datetime.getUTCMonth() == month){
+                    return d;
+                }
+            });
+            dateString = "<p class = 'align-center large'><b>{0} {1}</p>".format(months[month], year)
+        } else{
+            year = sliderDate;
+            filteredData = data.filter(function(d){
+                if (d.datetime.getUTCFullYear() == year){
+                    return d;
+                }
+            });
+            dateString = "<p class = 'align-center large'><b>{0}</b></p>".format(year)
+        }
+
+        return [filteredData, dateString];
     };
 
-    var applyStep = function(filteredData, slider, month, year){
-        document.getElementById("rowShowDate").innerHTML = '{0} {1}'.format(months[month], year);
+    var applyStep = function(filteredData, slider, dateString){
+        document.getElementById("rowShowDate").innerHTML = dateString;
+        console.log(dateString, filteredData)
         fillMap(filteredData);
     };
 
@@ -1386,78 +1440,126 @@ function draw(){
         // get boring
 
         var steps = (slider.slider('option', 'max') - slider.slider('option', 'value')) / slider.slider('option', 'step');
+        var timeout;
 
         (function playLoop(i){
             if ($("div#rowShowDate").hasClass('paused')){
                 return;
             }
-            var sliderData = getSliderData(data);
-            var timeout;
-            if (sliderData[2].length != 0){
-                timeout = 1000;
-            }else{
-                timeout = 100;
+            if ($("div#rowShowDate").hasClass('stopped')){
+                slider.slider('value', slider.slider('option', 'min'));
+                var sliderData = getSliderData(data);
+                applyStep(sliderData[0], slider, sliderData[1]);
+                return;
             }
+            var sliderData = getSliderData(data);
 
             setTimeout(function () {
-                applyStep(sliderData[2], slider, sliderData[0], sliderData[1]);
+                applyStep(sliderData[0], slider, sliderData[1]);
                 slider.slider('value', slider.slider('option', 'value') + slider.slider('option', 'step'));
-                if (--i) playLoop(i);
-            }, timeout)
+                if (--i > 0) playLoop(i);
+            }, timeout);
+
+            if (sliderData[0].length != 0){
+                timeout = 3000;
+            }else{
+                timeout = 1000;
+            }
+
         })(steps);
     };
 
     var implementAnimButtons = function(data){
+        var sliderData = getSliderData(data);
+        applyStep(sliderData[0], slider, sliderData[1]);
 
-        d3.select('button#animationBack')
+        $('button#animationBack')
+            .off('click')
             .on('click', function(){
                 slider.slider('value', slider.slider('option', 'value') - slider.slider('option', 'step'));
                 var sliderData = getSliderData(data);
-                applyStep(sliderData[2], slider, sliderData[0], sliderData[1]);
+                applyStep(sliderData[0], slider, sliderData[1]);
             });
 
-        d3.select('button#animationPlay')
+        $('button#animationPlay')
+            .off('click')
             .on('click', function(){
                 if ($("div#rowShowDate").hasClass('paused')){
                     $("div#rowShowDate").removeClass('paused');
                 }
+                if ($("div#rowShowDate").hasClass('stopped')){
+                    $("div#rowShowDate").removeClass('stopped');
+                }
                 playAnimation(data);
             });
 
-        d3.select('button#animationPause')
+        $('button#animationPause')
+            .off('click')
             .on('click', function(){
                 $("div#rowShowDate").toggleClass('paused');
             });
 
-        d3.select('button#animationStop')
+        $('button#animationStop')
+            .off('click')
             .on('click', function(){
-                $("div#rowShowDate").toggleClass('paused');
-                slider.slider('value', slider.slider('option', 'min'));
-                var sliderData = getSliderData(data);
-                applyStep(sliderData[2], slider, sliderData[0], sliderData[1]);
+                $("div#rowShowDate").toggleClass('stopped');
             });
 
-        d3.select('button#animationForward')
+        $('button#animationForward')
+            .off('click')
             .on('click', function(){
-                console.log(slider.slider('option', 'value'))
                 slider.slider('value', slider.slider('option', 'value') + slider.slider('option', 'step'));
-                console.log(slider.slider('option', 'value'))
                 var sliderData = getSliderData(data);
-                console.log(sliderData)
-                applyStep(sliderData[2], slider, sliderData[0], sliderData[1]);
+                applyStep(sliderData[0], slider, sliderData[1]);
             });
+
+        $( "#animSpeed" ).change(function(){
+            var sliderData = getSliderData(data);
+            applyStep(sliderData[0], slider, sliderData[1]);
+        });
+
+        slider.slider({stop : function(){
+            var sliderData = getSliderData(data);
+            applyStep(sliderData[0], slider, sliderData[1]);
+        }})
+    };
+
+    var switchInterface = function(data){
+        if ($("#activeAnimation").attr('value') == 'Animation'){
+            implementAnimButtons(data);
+            d3.select('div#legendCountries')
+                .selectAll('circle')
+                .on('click', null)
+        }else{
+            d3.select('div#legendCountries')
+                .selectAll('circle')
+                .on('click', function(){
+                    var active   = d3.select(this).classed('active') ? false : true,
+                        newOpacity = active ? 0.9 : 0.5;
+                    d3.select(this)
+                        .classed('active', function(){return active; })
+                        .transition()
+                        .duration(200)
+                        .style("opacity", newOpacity);
+                    updatePlots(data);
+                });
+            $("div#rowShowDate").toggleClass('stopped');
+        }
     };
 
     var implementAnimInterface = function(data){
-        $("#activeAnimation").on('click', function() {
+        switchInterface(data);
+        $("#activeAnimation").off('click').on('click', function(event) {
+            console.log(event)
             $('.control').toggle();
             var animationButton = $("#activeAnimation");
             var buttonValue = animationButton.attr('value');
             buttonValue = buttonValue == 'Exploration' ? 'Animation' : 'Exploration';
-            animationButton.attr('value', buttonValue);
-            if (buttonValue == 'Animation'){
-                implementAnimButtons(data);
-            }
+            animationButton.attr('value', buttonValue)
+                           .toggleClass('Animation');
+            console.log($("#activeAnimation").attr('value'))
+            switchInterface(data);
+
         });
     };
 

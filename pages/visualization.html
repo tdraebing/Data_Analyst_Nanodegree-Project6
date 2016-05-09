@@ -51,7 +51,7 @@
         </div>
         <div id = "visualizationAnimationControl" class = "row asphalt-bg vizbar">
             <div id = "buttonsAnimation" class = "row">
-                <div>
+                <div class = "one half">
                     <ul class="button-group">
                         <li>
                             <button id="animationBack"><i class="icon-step-backward"></i></button>
@@ -70,11 +70,17 @@
                         </li>
                     </ul>
                 </div>
+                <div class="one half">
+                    <select id = "animSpeed">
+                        <option selected ="">Days</option>
+                        <option>Months</option>
+                        <option>Years</option>
+                    </select>
+                </div>
             </div>
             <div id = "rowSliderAnimation" class = "row padded">
                 <div id = "sliderAnimation"></div>
             </div>
-            <div id = "rowShowDate" class = "row padded white-bg"></div>
         </div>
     </div>
 
@@ -151,6 +157,8 @@
                     <input id = "buttonSelectAll" type="button" name="buttonSelectAll" value = "Select All Countries">
                 </div>
             </div>
+
+            <div id = "rowShowDate" class = "row padded white-bg control" style = "display: none;"></div>
         </div>
     </div>
 
@@ -215,6 +223,7 @@
     var minDatePicker = fullDateFormat.parse("1/1/1944 0:00:00 AM"),
         maxDatePicker = fullDateFormat.parse("1/1/1999 0:00:00 AM");
 
+
     $( "#datePickerMin" ).datepicker({
         changeYear: true,
         changeMonth: true,
@@ -232,14 +241,40 @@
         defaultDate: maxDatePicker
     });
 
-    $( "#sliderAnimation" ).slider({
+    var slider = $( "#sliderAnimation" );
+
+    slider.slider({
         animate: 100,
-        min: new Date('1945.01.01').getTime() / 1000,
+        min: new Date('1945.07.01').getTime() / 1000,
         max: new Date('1999.01.01').getTime() / 1000,
-        step: 30.5 * 86400,
-        value: new Date('1945.01.01').getTime() / 1000,
-        slide: function( event, ui ) {
-            console.log(new Date(ui.value * 1000).toDateString() );
+        step: 86400,
+        value: new Date('1945.07.01').getTime() / 1000
+    });
+
+    $( "#animSpeed" ).change(function(){
+        var animSpeedSelection = $( "#animSpeed option:selected" ).text();
+        var dateString;
+        if(animSpeedSelection == "Days"){
+            slider.slider({step: 86400,
+                            min: new Date('1945.07.01').getTime() / 1000,
+                            max: new Date('1999.01.01').getTime() / 1000,
+                            value: new Date('1945.07.01').getTime() / 1000});
+            dateString = "<p class = 'align-center large'><b>01. July 1945</p>";
+            document.getElementById("rowShowDate").innerHTML = dateString;
+        } else if (animSpeedSelection == "Months"){
+            slider.slider({step: 1,
+                            min: 0,
+                            max: 54 * 12,
+                            value: 0});
+            dateString = "<p class = 'align-center large'><b>January 1945</p>";
+            document.getElementById("rowShowDate").innerHTML = dateString;
+        } else if (animSpeedSelection == "Years"){
+            slider.slider({step: 1,
+                            min: 1944,
+                            max: 1999,
+                            value: 1944});
+            dateString = "<p class = 'align-center large'><b>1944</p>";
+            document.getElementById("rowShowDate").innerHTML = dateString;
         }
     });
 
@@ -251,7 +286,10 @@
             $('.vizbar').switchClass('row', 'three fourth');
         }
         $('svg').remove();
-        setTimeout(function() {draw();},500);
+        if ($("#activeAnimation").hasClass('Animation')){
+            $("div#rowShowDate").toggleClass('stopped');
+        }
+        setTimeout(function() {draw();}, 500);
         return false;});
 
 
