@@ -73,8 +73,3 @@ circle.greyed {
 }
 
 div.helpbox {overflow: auto;}
-
-p.fbReply text {
-    font-style: italic;
-    color: #34495e;
-}

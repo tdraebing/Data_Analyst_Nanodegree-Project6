@@ -1347,10 +1347,10 @@ function draw(){
     // IMPLEMENT ANIMATION
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
 
+    //retrieve value from slider and filter data accordingly
     var getSliderData = function(data){
         var animSpeedSelection = $( "#animSpeed option:selected" ).text();
         var sliderDate = slider.slider('option', 'value');
-        console.log(sliderDate)
 
         var year;
         var month;
@@ -1395,6 +1395,7 @@ function draw(){
         return [filteredData, dateString];
     };
 
+    //do step in animation
     var applyStep = function(filteredData, slider, dateString){
         document.getElementById("rowShowDate").innerHTML = dateString;
         console.log(dateString, filteredData)
@@ -1491,6 +1492,7 @@ function draw(){
         }})
     };
 
+    //some panels of the visualization have to be altered according to the mode
     var switchInterface = function(data){
         if ($("#activeAnimation").attr('value') == 'Animation'){
             implementAnimButtons(data);

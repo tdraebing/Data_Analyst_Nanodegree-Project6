@@ -254,7 +254,7 @@
     var minDatePicker = fullDateFormat.parse("1/1/1944 0:00:00 AM"),
         maxDatePicker = fullDateFormat.parse("1/1/1999 0:00:00 AM");
 
-
+    //Initialize jquery UI datepicker
     $( "#datePickerMin" ).datepicker({
         changeYear: true,
         changeMonth: true,
@@ -272,6 +272,7 @@
         defaultDate: maxDatePicker
     });
 
+    //Initialize jquery UI slider
     var slider = $( "#sliderAnimation" );
 
     slider.slider({
@@ -282,6 +283,7 @@
         value: new Date('1945.07.01').getTime() / 1000
     });
 
+    //Account for changing animation speeds
     $( "#animSpeed" ).change(function(){
         var animSpeedSelection = $( "#animSpeed option:selected" ).text();
         var dateString;
@@ -309,6 +311,8 @@
         }
     });
 
+
+    //Initialize sidebar with help texts
     $("#buttonSidebar").on('click', function(){
         $('.sidebar').toggle(100);
         if ($('.vizbar').hasClass('three fourth')){
